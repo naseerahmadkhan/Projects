@@ -1,0 +1,42 @@
+npm create vite@latest
+
+https://mui.com/material-ui/material-icons/?query=list
+https://mui.com/material-ui/getting-started/usage/
+
+npm install @mui/material @emotion/react @emotion/styled
+npm install @mui/material @mui/styled-engine-sc styled-components
+npm install @fontsource/roboto
+npm install @mui/icons-material
+
+
+
+
+npm install react-quilljs quill
+
+
+npm i firebase
+
+Suggested Folder structure
+/src
+  /assets          # Static files like images, fonts, styles, etc.
+  /components      # Reusable components
+    /Button.js
+    /Header.js
+  /features        # Feature-based folder structure for Redux
+    /auth          # Example feature: authentication
+      authSlice.js  # Redux slice (state and reducers)
+      authAPI.js    # API calls for the feature
+      Auth.js       # Component for Auth UI
+    /todos         # Example feature: Todos
+      todosSlice.js # Redux slice (state and reducers)
+      Todos.js      # Component for displaying todos
+  /redux           # Global Redux store and reducers
+    store.js       # Redux store configuration
+  /services        # API services or business logic
+    api.js         # For API calls
+  /hooks           # Custom React hooks (optional)
+    useAuth.js     # Hook to manage authentication logic
+  /utils           # Utility functions
+    helper.js      # Helper functions
+  App.js           # Main app component
+  index.js         # Entry point for React

@@ -1,0 +1,9 @@
+npm create vite@latest
+
+https://tailwindcss.com/docs/align-items
+npm install tailwindcss @tailwindcss/vite
+
+
+
+https://daisyui.com/docs/install/
+npm i -D daisyui@latest
