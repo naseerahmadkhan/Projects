@@ -14,43 +14,30 @@ const DOCUMENT = "todolist"; // we will put username here
 
 async function addObjectInArrayInField(key, listItem) {
   try {
-    // Create a reference to the document
     const docRef = doc(db, COLLECTION, DOCUMENT);
-
-    // Get the document to check if it exists
     const docSnapshot = await getDoc(docRef);
 
     if (docSnapshot.exists()) {
-      // Document exists, check if the specific field exists
       const docData = docSnapshot.data();
 
-      if (docData && !docData.hasOwnProperty(key)) {
-        // If the field does not exist, create it and initialize as an array
-        await updateDoc(docRef, {
-          [key]: [listItem],
-        });
-        logger.log(`Field '${key}' created and item added.`);
+      if (docData[key] === undefined) {
+        // Field does not exist, initialize it as an array
+        await updateDoc(docRef, { [key]: [listItem] });
+        logger.log(`Field '${key}' created and initialized.`);
       } else {
-        // Field exists, update the array field using arrayUnion
-        await updateDoc(docRef, {
-          [key]: arrayUnion(listItem),
-        });
-        logger.log(`Item added to the existing field '${key}'`);
+        // Field exists, update it with arrayUnion
+        await updateDoc(docRef, { [key]: arrayUnion(listItem) });
+        logger.log(`Item added to the existing field '${key}'.`);
       }
     } else {
-      // If the document doesn't exist, create it and initialize the field
-      await setDoc(docRef, {
-        [key]: [listItem],
-      });
-      logger.log(`Document created and field '${key}' initialized with the item.`);
+      // Document does not exist, create it with the field
+      await setDoc(docRef, { [key]: [listItem] }, { merge: true });
+      logger.log(`Document created with field '${key}'.`);
     }
 
-    // If everything is successful, return true
     return true;
   } catch (error) {
-    logger.error("Error adding item or creating field: ", error);
-    
-    // If there's an error, return false
+    logger.error("Error adding item or creating field:", error);
     return false;
   }
 }

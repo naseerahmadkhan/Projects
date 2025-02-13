@@ -104,7 +104,7 @@ async function getAllDataFromField(fieldName) {
         return docData[fieldName] // Return only the specified field
       } else {
         console.log(`Field '${fieldName}' does not exist in the document.`)
-        return null // Return null if the field does not exist
+        return [] // Return null if the field does not exist
       }
     } else {
       console.log("No such document!")

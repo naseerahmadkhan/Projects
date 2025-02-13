@@ -7,8 +7,11 @@ import TextField from "@mui/material/TextField"
 import Stack from "@mui/material/Stack"
 import IconButton from "@mui/material/IconButton"
 import CloseIcon from "@mui/icons-material/Close"
-import { addCategoryAsync  } from "../../../features/todos/categorySlice"
-import { useDispatch } from 'react-redux'; // Correct import
+import { addCategoryAsync, addCategory  } from "../../../features/todos/categorySlice"
+import { useDispatch,useSelector } from 'react-redux'; // Correct import
+import { addObjectInArrayInField,} from "../../../firebase/fieldOperations/arrayInFieldOperations"
+import { getAllDataFromField } from "../../../firebase/fieldOperations/fieldOperations"
+import logger from "../../../utils/logger"
 
 const style = {
   position: "absolute",
@@ -25,27 +28,27 @@ export default function CategoryModal({ show, handleShowModal }) {
   const catRef = React.useRef();
   const [error, setError] = React.useState('');
   const dispatch = useDispatch(); // Call useDispatch hook outside of the function
+  const categories = useSelector((state) => state.categories.categories);
   
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // Reset previous error state
-    setError('');
 
-    let categoryName = catRef.current.value;    
-
+  const checkMinLength = (categoryName,minLength)=>{
     // Validate the category name
-    if (categoryName.length < 2) {
-      setError('Category name must be at least 2 characters long.');
+    if (categoryName.length < minLength) {
+      setError(`Category name must be at least ${minLength} characters long.`);
       return;
     }
-    // if (categoryName.length > 5) {
-    //   setError('Category name cannot be more than 5 characters.');
-    //   return;
-    // }
+  }
 
-    // Dispatch async action to add the category
+  const checkMaxLength = (categoryName,maxLength)=>{
+    // Validate the category name
+    if (categoryName.length > minLength) {
+      setError(`Category name must be at most ${maxLength} characters long.`);
+      return;
+    }
+  }
+
+  const sendDataToReduxStoreAndThenSaveInDB = (categoryName)=>{
+    // Dispatch async action to add the category-----------
     dispatch(addCategoryAsync(categoryName))
       .unwrap()  // Optionally, handle success or failure here
       .then(() => {
@@ -54,8 +57,35 @@ export default function CategoryModal({ show, handleShowModal }) {
       .catch((err) => {
         console.log(err);  // Handle error here
       });
+      // ------------------------------------------------
+
+  }
+
+  const sendDataToDbAndThenUpdateReduxStore = async(categoryName)=>{
+    try{
+      let nextId = categories.length +1
+      let payload = { cid: nextId, cname: categoryName, date: Date.now() };
+      await addObjectInArrayInField('categories', payload);
+      const fetchedCategoriesList = await getAllDataFromField("categories");
+      dispatch(addCategory(fetchedCategoriesList));
+    }catch(e){
+      logger.log('error:',e);
+    }
+  }
+
+
+  // Handle form submission
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+    setError(''); // Reset previous error state
+    let categoryName = catRef.current.value;    
+    checkMinLength(categoryName,2)
+    // checkMaxLength(categoryName,maxLength=5)
+    // sendDataToReduxStoreAndThenSaveInDB(categoryName)
+    await sendDataToDbAndThenUpdateReduxStore(categoryName)
     catRef.current.value = ""; // Clear the input field
-    // handleShowModal(); // Close the modal
+    handleShowModal();
+    alert('data added successfully!')
   }
 
   return (
