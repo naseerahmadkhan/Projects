@@ -1,78 +1,67 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllDataFromField } from "../../firebase/fieldOperations/fieldOperations";
-import { addObjectInArrayInField } from "../../firebase/fieldOperations/arrayInFieldOperations";
+// categorySlice.js
 
-// Async thunk to fetch categories
-export const fetchCategoriesAsync = createAsyncThunk(
-  "category/fetchCategoriesAsync",
-  async (_, { rejectWithValue, getState }) => {
-    const { category } = getState();
-    if (category.status === "succeeded") return; // Avoid re-fetching if already loaded
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { addObjectInArrayInField } from '../../firebase/fieldOperations/arrayInFieldOperations';
 
-    try {
-      const categories = await getAllDataFromField("categories");
-      return categories;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-// Async thunk to add a category
+// Define an async thunk for adding a category
 export const addCategoryAsync = createAsyncThunk(
-  "category/addCategoryAsync",
-  async (categoryName, { rejectWithValue, getState }) => {
+  'category/addCategoryAsync',
+  async (categoryName, { rejectWithValue,getState }) => {
     try {
-      const state = getState();
-      let nextId = state.category.categories.length + 1;
-      let newCategory = { cid: nextId, cname: categoryName, date: Date.now() };
+      let state = await getState();
+      let nextId = state.categories.categories.length + 1;
+      let currentCategory = { cid: nextId, cname: categoryName, date: Date.now() };
 
-      // Add category to Firestore
-      await addObjectInArrayInField("categories", newCategory);
+      // Assuming addObjectInArrayInField is a promise-returning function
+      await addObjectInArrayInField('categories', currentCategory);
 
-      return newCategory; // Return to add to Redux state
+      return currentCategory;  // Return the category to be added to the state
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.message);  // Return the error if the operation fails
     }
   }
 );
 
 const categorySlice = createSlice({
-  name: "category",
+  name: 'category',
   initialState: {
     categories: [],
-    status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
+    loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    addCategory: (state, action) => {
+     
+      state.categories = action.payload;
+      
+    
+    
+    },
+    removeCategory: (state, action) => {
+      state.categories = state.categories.filter(cat => cat.cid !== action.payload);
+    },
+    updateCategory: (state, action) => {
+      const cat = state.categories.find(cat => cat.cid === action.payload);
+      if (cat) {
+        cat.cid = !cat.cid; // Example update, adjust as needed
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
-      // Fetch Categories
-      .addCase(fetchCategoriesAsync.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(fetchCategoriesAsync.fulfilled, (state, action) => {
-        state.categories = action.payload;
-        state.status = "succeeded";
-      })
-      .addCase(fetchCategoriesAsync.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
-
-      // Add Category
       .addCase(addCategoryAsync.pending, (state) => {
-        state.status = "loading";
+        state.loading = true;  // Set loading state to true while async operation is pending
       })
       .addCase(addCategoryAsync.fulfilled, (state, action) => {
-        state.categories.push(action.payload);
-        state.status = "succeeded";
+        state.categories.push(action.payload);  // Add category to the state
+        state.loading = false;  // Set loading state to false when done
       })
       .addCase(addCategoryAsync.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
+        state.loading = false;  // Set loading state to false on failure
+        state.error = action.payload;  // Capture the error message
       });
   },
 });
 
+export const { addCategory,removeCategory, updateCategory } = categorySlice.actions;
 export default categorySlice.reducer;

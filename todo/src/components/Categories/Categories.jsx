@@ -4,15 +4,22 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { getAllDataFromField } from "../../firebase/fieldOperations/fieldOperations";
+import { useSelector, useDispatch } from "react-redux";
+import {addCategory} from '../../features/todos/categorySlice'
 
 const Categories = () => {
   const [selectedCategory, setSelectedCategory] = useState("notSeleted");  
-  const [categories, setCategories] = useState([]);
+  const dispatch = useDispatch();
+  const categories = useSelector((state) => state.categories.categories);
 
-  const fetchData = async () => {
+
+ 
+
+  const fetchDatafromDbAndSaveInReduxStore = async () => {
     try {
       const fetchedCategoriesList = await getAllDataFromField("categories");
-      setCategories(fetchedCategoriesList);
+      dispatch(addCategory(fetchedCategoriesList));
+      
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -21,7 +28,7 @@ const Categories = () => {
   useEffect(() => {
    
 
-    fetchData();
+    fetchDatafromDbAndSaveInReduxStore();
   }, []);
 
   // Handle category selection
