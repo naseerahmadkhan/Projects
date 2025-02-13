@@ -15,32 +15,15 @@ const DOCUMENT = "todolist"; // we will put username here
 async function addObjectInArrayInField(key, listItem) {
   try {
     const docRef = doc(db, COLLECTION, DOCUMENT);
-    const docSnapshot = await getDoc(docRef);
+    await setDoc(docRef, { [key]: arrayUnion(listItem) }, { merge: true });
 
-    if (docSnapshot.exists()) {
-      const docData = docSnapshot.data();
-
-      if (docData[key] === undefined) {
-        // Field does not exist, initialize it as an array
-        await updateDoc(docRef, { [key]: [listItem] });
-        logger.log(`Field '${key}' created and initialized.`);
-      } else {
-        // Field exists, update it with arrayUnion
-        await updateDoc(docRef, { [key]: arrayUnion(listItem) });
-        logger.log(`Item added to the existing field '${key}'.`);
-      }
-    } else {
-      // Document does not exist, create it with the field
-      await setDoc(docRef, { [key]: [listItem] }, { merge: true });
-      logger.log(`Document created with field '${key}'.`);
-    }
-
-    return true;
+    logger.log(`Item added to field '${key}'.`);
   } catch (error) {
-    logger.error("Error adding item or creating field:", error);
-    return false;
+    logger.error("Error adding item:", error);
   }
 }
+
+
 
 
 async function updateObjectInArrayInField(key, itemId, updatedFields) {
