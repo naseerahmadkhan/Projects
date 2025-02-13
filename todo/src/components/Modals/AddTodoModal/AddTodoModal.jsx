@@ -8,6 +8,7 @@ import Stack from "@mui/material/Stack"
 import IconButton from "@mui/material/IconButton"
 import CloseIcon from "@mui/icons-material/Close"
 import TextEditor from "../../TextEditor"
+import Categories from "../../Categories"
 const style = {
   position: "absolute",
   top: "50%",
@@ -51,6 +52,7 @@ export default function AddTodoModal({ show, handleShowModal }) {
           </Box>
 
           <Stack sx={{ display: "flex" }} spacing={3}>
+            <Categories categorySelected={(e)=>console.log(e)}/>
           <TextField
                         required
                         id="todo-name"

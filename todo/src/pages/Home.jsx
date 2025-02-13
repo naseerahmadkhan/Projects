@@ -43,7 +43,7 @@ function Home() {
         <Stack sx={{ alignItems: "center" }} spacing={3}>
           <Box sx={{ display: "flex", width: 2 / 3, gap: 1 }}>
             <Box sx={{ flex: 1,marginTop:10 }}>
-              <Categories />
+              <Categories categorySelected={(e)=>console.log(e)}/>
             </Box>
           </Box>
 
