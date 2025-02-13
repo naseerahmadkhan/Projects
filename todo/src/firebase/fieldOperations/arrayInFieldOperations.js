@@ -16,7 +16,6 @@ async function addObjectInArrayInField(key, listItem) {
   try {
     const docRef = doc(db, COLLECTION, DOCUMENT);
     await setDoc(docRef, { [key]: arrayUnion(listItem) }, { merge: true });
-
     logger.log(`Item added to field '${key}'.`);
   } catch (error) {
     logger.error("Error adding item:", error);
