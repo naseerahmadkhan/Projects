@@ -8,26 +8,30 @@ import ListItemText from '@mui/material/ListItemText';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import { useSelector } from 'react-redux';
 
-export default function TodoList() {
+export default function TodoList({catId}) {
   // const list = Array.from({length:10},(_,i)=>i+1)
   const todos = useSelector((state) => state.todo.todos);
   return (
     <Box sx={{ width: '100%', maxWidth: 480, bgcolor: 'background.paper' }}>
       
-        {todos.map((item,index)=>{
-            return <List key={item.id}>
+        {todos
+        .filter(todo => todo.cid === catId)
+        .map((item,index)=>{
+            return <List key={index}>
             <ListItem disablePadding>
               <ListItemButton>
                 <ListItemIcon>
                   <PlaylistAddCheckIcon />
                 </ListItemIcon>
-                <ListItemText primary={item.text} />
+                <ListItemText primary={item.name} />
               </ListItemButton>
             </ListItem>
           </List>
 
           })
         }
+
+
         
       
       

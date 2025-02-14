@@ -9,23 +9,9 @@ import { addCategory } from "../../features/todos/categorySlice";
 
 const Categories = ({categorySelected}) => {
   const [selected, setSelected] = useState("notSelected");
-  const dispatch = useDispatch();
   const categories = useSelector((state) => state.categories.categories) || []; 
 
 
-
-  const fetchDatafromDbAndSaveInReduxStore = async () => {
-    try {
-      const fetchedCategoriesList = await getAllDataFromField("categories");
-      dispatch(addCategory(fetchedCategoriesList));
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchDatafromDbAndSaveInReduxStore();
-  }, [dispatch]);
 
   const handleChange = (event) => {
     setSelected(event.target.value);
@@ -41,7 +27,7 @@ const Categories = ({categorySelected}) => {
         </MenuItem>
         {
           categories.map((item, index) => (
-            <MenuItem key={index} value={item.cname}>
+            <MenuItem key={index} value={item.cid}>
               {item.cname}
             </MenuItem>
           ))

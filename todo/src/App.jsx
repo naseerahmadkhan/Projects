@@ -1,4 +1,4 @@
-import * as React from "react"
+import React, { useState, useEffect } from "react";
 import Home from "./pages/Home"
 import store from "./redux/store"
 import { Provider } from "react-redux"
@@ -27,7 +27,11 @@ import {
   deleteDocument,
   checkAndCreateEmptyDocument
 } from './firebase/documentOperations/documentOperations'
+
 function App() {
+
+
+
   // addObjectInArrayInField('category',{id:5,name:'next.js'})
   // updateObjectInArrayInField('category',5,{name:'***js',active:true})
   // deleteObjectInArrayInField('category',5)
@@ -48,6 +52,8 @@ function App() {
   // deleteDocument('todo','naseer4uplus@gmail.com')
 
   // checkAndCreateEmptyDocument('todo','naseer4uplus@gmail.com')
+
+ 
  
   return (
     <Provider store={store}>

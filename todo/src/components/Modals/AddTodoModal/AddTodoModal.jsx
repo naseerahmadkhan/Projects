@@ -9,6 +9,8 @@ import IconButton from "@mui/material/IconButton"
 import CloseIcon from "@mui/icons-material/Close"
 import TextEditor from "../../TextEditor"
 import Categories from "../../Categories"
+
+import { getAllDataFromField } from "../../../firebase/fieldOperations/fieldOperations"
 const style = {
   position: "absolute",
   top: "50%",
@@ -18,20 +20,47 @@ const style = {
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
- 
 }
 
 export default function AddTodoModal({ show, handleShowModal }) {
   const textEditorRef = React.useRef()
+  const todoRef = React.useRef()
+  const [todo,setTodo] = React.useState({})
+  const [html,setHtml] = React.useState("")
 
-   // Function to clear content and log it
-   const clearText = () => {
-    if (textEditorRef.current) {
-      let htmlContent = textEditorRef.current.getHTMLContent()
-      console.log(htmlContent)
-      textEditorRef.current.clearText() // Clear the editor content
-    }
+  const handleSubmit = () => {
+    let htmlContent = textEditorRef.current.getHTMLContent();
+    setHtml(htmlContent);
+
+  
+   // Then, update `todo` state and call API inside the callback
+  setTodo((prev) => {
+    const updatedTodo = { ...prev, todo: todoRef.current.value };
+    
+    console.log("***", updatedTodo, htmlContent); // Logs latest values
+    // Call API with updated values
+
+    return updatedTodo; // Return updated state
+  });
+    textEditorRef.current.clearText();
+    console.log('***',todo,html)
+  };
+
+  const getData = async()=>{
+    return await getAllDataFromField('todo');
   }
+
+  React.useEffect(()=>{
+    let res = getData();
+    console.log(JSON.stringify(res))
+    if(res){
+      console.log('correct')
+    }else{
+      console.log('incorrect')
+    }
+    
+  },[])
+ 
   return (
     <div>
       <Modal
@@ -52,22 +81,21 @@ export default function AddTodoModal({ show, handleShowModal }) {
           </Box>
 
           <Stack sx={{ display: "flex" }} spacing={3}>
-            <Categories categorySelected={(e)=>console.log(e)}/>
-          <TextField
-                        required
-                        id="todo-name"
-                        label="Todo Name"
-                        variant="filled"
-                        helperText={'Please enter a valid todo name (2-5 characters).'}
-                       
-                        slotProps={{
-                          minLength: 2,
-                          maxLength: 5,
-                        }}
-                      />
+            <Categories categorySelected={(val) => setTodo((prev)=>({...prev,cid:val}))} />
+            <TextField
+              inputRef={todoRef}
+              required
+              id="todo-name"
+              label="Todo Name"
+              variant="filled"
+              helperText={"Please enter a valid todo name (2-5 characters)."}
+              slotProps={{
+                minLength: 2,
+              }}
+            />
             <TextEditor ref={textEditorRef} />
 
-            <Button fullWidth sx={{ height: 50 }} variant="contained">
+            <Button fullWidth sx={{ height: 50 }} variant="contained" onClick={handleSubmit}> 
               Add
             </Button>
           </Stack>

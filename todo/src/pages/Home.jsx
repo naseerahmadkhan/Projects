@@ -1,4 +1,4 @@
-import * as React from "react"
+import React, { useState, useEffect } from "react";
 
 import "../styles/App.css"
 import Box from "@mui/material/Box"
@@ -10,6 +10,11 @@ import CategoryModal from "../components/Modals/CreateCategoryModal"
 import TodoList from "../components/TodoList"
 import NavigationDrawer from "../components/Drawer/NavigationDrawer"
 
+import { useSelector, useDispatch } from "react-redux";
+import { addCategory } from "../features/todos/categorySlice"
+import { getAllDataFromField } from "../firebase/fieldOperations/fieldOperations";
+import { addTodo } from "../features/todos/todoSlice";
+
 function Home() {
   const modals = {
     categories: false,
@@ -17,10 +22,28 @@ function Home() {
     drawer: false,
   }
   const [showModal, setShowModal] = React.useState(modals)
+  const [categories, setCategories] = React.useState(null)
+  const dispatch = useDispatch();
+
+ 
 
   const handleModal = (target) => {
     setShowModal((prev) => ({ ...prev, [target]: !prev[target] }))
   }
+
+  const fetchDatafromDbAndSaveInReduxStore = async (field, action) => {
+    try {
+      const resultData = await getAllDataFromField(field);
+      dispatch(action(resultData));
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDatafromDbAndSaveInReduxStore("categories", addCategory); 
+    fetchDatafromDbAndSaveInReduxStore("todo", addTodo); 
+  }, [dispatch]);
 
   return (
     <Box>
@@ -43,11 +66,11 @@ function Home() {
         <Stack sx={{ alignItems: "center" }} spacing={3}>
           <Box sx={{ display: "flex", width: 2 / 3, gap: 1 }}>
             <Box sx={{ flex: 1,marginTop:10 }}>
-              <Categories categorySelected={(e)=>console.log(e)}/>
+              <Categories categorySelected={(id)=>setCategories(id)}/>
             </Box>
           </Box>
 
-          <TodoList />
+          <TodoList catId={categories}/>
         </Stack>
       </Box>
     </Box>
