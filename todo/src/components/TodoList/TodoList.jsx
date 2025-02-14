@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 export default function TodoList({catId}) {
   // const list = Array.from({length:10},(_,i)=>i+1)
   const todos = useSelector((state) => state.todo.todos);
+  console.log('todos>>>',todos)
   return (
     <Box sx={{ width: '100%', maxWidth: 480, bgcolor: 'background.paper' }}>
       
@@ -23,7 +24,7 @@ export default function TodoList({catId}) {
                 <ListItemIcon>
                   <PlaylistAddCheckIcon />
                 </ListItemIcon>
-                <ListItemText primary={item.name} />
+                <ListItemText primary={item.todoName} />
               </ListItemButton>
             </ListItem>
           </List>

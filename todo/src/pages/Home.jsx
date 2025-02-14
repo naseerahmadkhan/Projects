@@ -42,7 +42,7 @@ function Home() {
 
   useEffect(() => {
     fetchDatafromDbAndSaveInReduxStore("categories", addCategory); 
-    fetchDatafromDbAndSaveInReduxStore("todo", addTodo); 
+    fetchDatafromDbAndSaveInReduxStore("todos", addTodo); 
   }, [dispatch]);
 
   return (

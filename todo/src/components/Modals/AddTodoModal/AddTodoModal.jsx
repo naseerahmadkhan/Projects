@@ -9,8 +9,10 @@ import IconButton from "@mui/material/IconButton"
 import CloseIcon from "@mui/icons-material/Close"
 import TextEditor from "../../TextEditor"
 import Categories from "../../Categories"
-
+import { useDispatch,useSelector } from 'react-redux'; // Correct import
 import { getAllDataFromField } from "../../../firebase/fieldOperations/fieldOperations"
+import { addTodo } from "../../../features/todos/todoSlice"
+import { addObjectInArrayInField } from "../../../firebase/fieldOperations/arrayInFieldOperations"
 const style = {
   position: "absolute",
   top: "50%",
@@ -24,42 +26,50 @@ const style = {
 
 export default function AddTodoModal({ show, handleShowModal }) {
   const textEditorRef = React.useRef()
+  const dispatch = useDispatch(); // Call useDispatch hook outside of the function
+  const todos = useSelector((state) => state.todo.todos);
+  
+
   const todoRef = React.useRef()
-  const [todo,setTodo] = React.useState({})
+  const [catId,setCatId] = React.useState()
   const [html,setHtml] = React.useState("")
 
-  const handleSubmit = () => {
-    let htmlContent = textEditorRef.current.getHTMLContent();
-    setHtml(htmlContent);
-
-  
-   // Then, update `todo` state and call API inside the callback
-  setTodo((prev) => {
-    const updatedTodo = { ...prev, todo: todoRef.current.value };
-    
-    console.log("***", updatedTodo, htmlContent); // Logs latest values
-    // Call API with updated values
-
-    return updatedTodo; // Return updated state
-  });
-    textEditorRef.current.clearText();
-    console.log('***',todo,html)
-  };
-
-  const getData = async()=>{
-    return await getAllDataFromField('todo');
+  const sendDataToDbAndThenUpdateReduxStore = async(fieldName,payload)=>{
+    try{
+     
+      await addObjectInArrayInField(fieldName, payload);
+      const resultData = await getAllDataFromField(fieldName);
+      dispatch(addTodo(resultData));
+    }catch(e){
+      logger.log('error:',e);
+    }
   }
 
-  React.useEffect(()=>{
-    let res = getData();
-    console.log(JSON.stringify(res))
-    if(res){
-      console.log('correct')
-    }else{
-      console.log('incorrect')
+
+  const handleSubmit = async () => {
+    let htmlContent = textEditorRef.current.getHTMLContent();
+    setHtml(htmlContent);
+  
+    const todoPayload = { todoName: todoRef.current.value, date: Date.now(), tid: todos.length + 1,cid:catId };
+    const contentPayload = {cid:catId,tid:todos.length+1,html:htmlContent}
+  
+    // Wait for the API call to complete before closing modal
+    try {
+      await sendDataToDbAndThenUpdateReduxStore("contents", contentPayload);
+      await sendDataToDbAndThenUpdateReduxStore("todos", todoPayload);
+      handleShowModal(); // Close modal only after API call is done
+    } catch (error) {
+      console.error("Error saving todo:", error);
     }
-    
-  },[])
+  
+    // setTodo(updatedTodo); // Update state (no need to use prev since we have the new object)
+    textEditorRef.current.clearText();
+  };
+  
+
+ 
+
+  
  
   return (
     <div>
@@ -81,7 +91,7 @@ export default function AddTodoModal({ show, handleShowModal }) {
           </Box>
 
           <Stack sx={{ display: "flex" }} spacing={3}>
-            <Categories categorySelected={(val) => setTodo((prev)=>({...prev,cid:val}))} />
+            <Categories categorySelected={(id) => setCatId((id))} />
             <TextField
               inputRef={todoRef}
               required
