@@ -46,23 +46,33 @@ export default function AddTodoModal({ show, handleShowModal }) {
   }
 
 
+  const sendDataToDb = async(fieldName,payload)=>{
+    try{
+     
+      await addObjectInArrayInField(fieldName, payload);
+      
+    }catch(e){
+      logger.log('error:',e);
+    }
+  }
+
+
   const handleSubmit = async () => {
     let htmlContent = textEditorRef.current.getHTMLContent();
     setHtml(htmlContent);
   
     const todoPayload = { todoName: todoRef.current.value, date: Date.now(), tid: todos.length + 1,cid:catId };
-    const contentPayload = {cid:catId,tid:todos.length+1,html:htmlContent}
+    const contentPayload = {cid:catId,tid:todos.length+1,html:htmlContent,date: Date.now()}
   
     // Wait for the API call to complete before closing modal
     try {
-      await sendDataToDbAndThenUpdateReduxStore("contents", contentPayload);
+      await sendDataToDb("contents", contentPayload);
       await sendDataToDbAndThenUpdateReduxStore("todos", todoPayload);
       handleShowModal(); // Close modal only after API call is done
     } catch (error) {
       console.error("Error saving todo:", error);
     }
   
-    // setTodo(updatedTodo); // Update state (no need to use prev since we have the new object)
     textEditorRef.current.clearText();
   };
   
