@@ -12,7 +12,12 @@ import Paper from "@mui/material/Paper"
 import Grid from "@mui/material/Grid2"
 import { styled } from "@mui/material/styles"
 import EditIcon from "@mui/icons-material/Edit"
+import DeleteIcon from "@mui/icons-material/Delete"
 import TodoEditModal from "./TodoEditModal"
+import { deleteObjectInArrayInField } from "../../../firebase/fieldOperations/arrayInFieldOperations"
+import { getAllDataFromField } from "../../../firebase/fieldOperations/fieldOperations"
+import { addTodo } from "../../../features/todos/todoSlice"
+import { useDispatch,useSelector } from 'react-redux'; 
 
 const style = {
   position: "absolute",
@@ -27,8 +32,23 @@ const style = {
 
 const TodoPreviewModal = ({ show, handleShowModal, data }) => {
   const [isEditable, setIsEditable] = React.useState(false)
+  const dispatch = useDispatch(); //
 
 
+  const handleDeleteTodo = async()=>{
+    console.log("delete todo")
+    const tid = data.tid
+    try{
+      await deleteObjectInArrayInField("todos", tid)
+      const resultData = await getAllDataFromField('todos');
+      dispatch(addTodo(resultData));
+      handleCloseModal()
+
+    }catch(e){
+      alert(e)
+    }
+
+  }
  
 
   const handleCloseModal = () => {
@@ -76,12 +96,22 @@ const TodoPreviewModal = ({ show, handleShowModal, data }) => {
                     label={data.completed ? "Completed" : "Pending"}
                     variant="outlined"
                   />
+                  <Stack direction="row">
                   <Chip
                     label="Edit Todo"
                     variant="outlined"
                     icon={<EditIcon />}
                     onClick={() => setIsEditable(true)}
                   />
+                   <Chip
+                    label="Delete Todo"
+                    variant="outlined"
+                    icon={<DeleteIcon />}
+                    onClick={handleDeleteTodo}
+                  />
+
+                  </Stack>
+                  
                   
                 </Grid>
               </Box>

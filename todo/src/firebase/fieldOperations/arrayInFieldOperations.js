@@ -76,7 +76,7 @@ async function deleteObjectInArrayInField(key, itemId) {
       const arrayField = docData[key] || [];
 
       // Find the object in the array that has the matching id
-      const itemToRemove = arrayField.find((item) => item.id === itemId);
+      const itemToRemove = arrayField.find((item) => item.tid === itemId);
 
       if (itemToRemove) {
         // If the item exists, remove it from the array using arrayRemove
