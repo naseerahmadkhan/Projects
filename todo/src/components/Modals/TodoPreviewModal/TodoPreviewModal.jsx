@@ -11,18 +11,9 @@ import Chip from "@mui/material/Chip"
 import Paper from "@mui/material/Paper"
 import Grid from "@mui/material/Grid2"
 import { styled } from "@mui/material/styles"
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit"
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-  ...theme.applyStyles("dark", {
-    backgroundColor: "#1A2027",
-  }),
-}))
+
 
 const style = {
   position: "absolute",
@@ -36,7 +27,7 @@ const style = {
 }
 
 const TodoPreviewModal = ({ show, handleShowModal, data }) => {
-  console.log("data getting in preview", data)
+  const [isEditable,setIsEditable] = React.useState(false)
   return (
     <div>
       <Modal
@@ -51,7 +42,7 @@ const TodoPreviewModal = ({ show, handleShowModal, data }) => {
               {data.todoName}
             </Typography>
             <IconButton aria-label="close" onClick={handleShowModal}>
-              <EditIcon />
+              <CloseIcon />
             </IconButton>
           </Box>
 
@@ -68,6 +59,12 @@ const TodoPreviewModal = ({ show, handleShowModal, data }) => {
                     label={data.completed ? "Completed" : "Pending"}
                     variant="outlined"
                   />
+                  <Chip
+                    label="Edit Todo"
+                    variant="outlined"
+                    icon={<EditIcon />}
+                    onClick={() => {}}
+                  />
                 </Grid>
               </Box>
             </Box>
@@ -78,17 +75,6 @@ const TodoPreviewModal = ({ show, handleShowModal, data }) => {
                   dangerouslySetInnerHTML={{ __html: data.contents.html }}
                 />
               )}
-            </Box>
-
-            <Box style={{ display: "flex", justifyContent: "center" }}>
-              <Button
-                style={{ width: "50%" }}
-                variant="contained"
-                endIcon={<CloseIcon />}
-                onClick={handleShowModal}
-              >
-                Close
-              </Button>
             </Box>
           </Stack>
         </Box>

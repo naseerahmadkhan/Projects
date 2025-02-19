@@ -16,6 +16,10 @@ import { addCategory } from "../features/todos/categorySlice"
 import { getAllDataFromField} from "../firebase/fieldOperations/fieldOperations";
 import { addTodo } from "../features/todos/todoSlice";
 import { getObjectInArrayInFieldByCondition } from "../firebase/fieldOperations/arrayInFieldOperations";
+import { Button } from "@mui/material";
+import EditIcon from '@mui/icons-material/Edit';
+import IconButton from "@mui/material/IconButton"
+import DeleteIcon from '@mui/icons-material/Delete';
 
 function Home() {
   const modals = {
@@ -89,8 +93,15 @@ function Home() {
       <Box sx={{ padding: "25px", display: "flex", flexDirection: "column" }}>
         <Stack sx={{ alignItems: "center" }} spacing={3}>
           <Box sx={{ display: "flex", width: 2 / 3, gap: 1 }}>
-            <Box sx={{ flex: 1,marginTop:10 }}>
+            <Box sx={{display:'flex',flex: 1,marginTop:10 }}>
               <Categories categorySelected={(id)=>setCategories(id)}/>
+             {categories &&  <IconButton aria-label="close" onClick={()=>console.log(categories)}>
+              <EditIcon />
+            </IconButton>}
+
+            {categories && <IconButton aria-label="close">
+              <DeleteIcon />
+            </IconButton>}
             </Box>
           </Box>
 
