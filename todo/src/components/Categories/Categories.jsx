@@ -32,7 +32,7 @@ const Categories = ({categorySelected}) => {
         </MenuItem>
         {
           categories.map((item, index) => (
-            <MenuItem key={index} value={item.cid} onMouseDown={()=>console.log('long')}>
+            <MenuItem key={index} value={item.cid}>
             {item.cname}
           </MenuItem>
            

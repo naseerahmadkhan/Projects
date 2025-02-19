@@ -15,11 +15,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { addCategory } from "../features/todos/categorySlice"
 import { getAllDataFromField} from "../firebase/fieldOperations/fieldOperations";
 import { addTodo } from "../features/todos/todoSlice";
-import { getObjectInArrayInFieldByCondition } from "../firebase/fieldOperations/arrayInFieldOperations";
+import { getObjectInArrayInFieldByCondition,deleteObjectInArrayInField } from "../firebase/fieldOperations/arrayInFieldOperations";
 import { Button } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from "@mui/material/IconButton"
 import DeleteIcon from '@mui/icons-material/Delete';
+
 
 function Home() {
   const modals = {
@@ -32,6 +33,26 @@ function Home() {
   const [categories, setCategories] = React.useState(null)
   const [selectedTodo,setSelectedTodo]= React.useState({})
   const dispatch = useDispatch();
+  const todos = useSelector((state) => state.todo.todos);
+
+  const handleDeleteCategory = async()=>{
+    
+   let filteredTodos =  todos.filter((item)=>item.cid==categories);
+   if(filteredTodos.length ==0){
+    try{
+      await deleteObjectInArrayInField('categories','cid',categories)
+      await fetchDatafromDbAndSaveInReduxStore("categories", addCategory); 
+    }catch(e){
+      alert(e)
+    }
+   }else{
+    alert('first remove todos from categories')
+   }
+   
+
+
+
+  }
 
  const handleTodoPreview = async(data)=>{
   const {tid} = data
@@ -99,7 +120,7 @@ function Home() {
               <EditIcon />
             </IconButton>}
 
-            {categories && <IconButton aria-label="close">
+            {categories && <IconButton aria-label="close" onClick={()=>handleDeleteCategory()}>
               <DeleteIcon />
             </IconButton>}
             </Box>

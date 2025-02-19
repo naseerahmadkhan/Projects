@@ -39,7 +39,7 @@ const TodoPreviewModal = ({ show, handleShowModal, data }) => {
     console.log("delete todo")
     const tid = data.tid
     try{
-      await deleteObjectInArrayInField("todos", tid)
+      await deleteObjectInArrayInField('todos','tid',tid)
       const resultData = await getAllDataFromField('todos');
       dispatch(addTodo(resultData));
       handleCloseModal()

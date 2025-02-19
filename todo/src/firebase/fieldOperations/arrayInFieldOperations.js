@@ -62,7 +62,7 @@ async function updateObjectInArrayInField(key, itemId, updatedFields) {
   }
 }
 
-async function deleteObjectInArrayInField(key, itemId) {
+async function deleteObjectInArrayInField(key, idName,id) {
   try {
     // Create a reference to the document
     const docRef = doc(db, COLLECTION, DOCUMENT);
@@ -76,7 +76,7 @@ async function deleteObjectInArrayInField(key, itemId) {
       const arrayField = docData[key] || [];
 
       // Find the object in the array that has the matching id
-      const itemToRemove = arrayField.find((item) => item.tid === itemId);
+      const itemToRemove = arrayField.find((item) => item[idName] === id);
 
       if (itemToRemove) {
         // If the item exists, remove it from the array using arrayRemove
