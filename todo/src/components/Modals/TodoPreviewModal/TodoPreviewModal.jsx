@@ -1,6 +1,6 @@
 import * as React from "react"
 import Box from "@mui/material/Box"
-import Button from "@mui/material/Button"
+
 import Typography from "@mui/material/Typography"
 import Modal from "@mui/material/Modal"
 import TextField from "@mui/material/TextField"
@@ -12,8 +12,7 @@ import Paper from "@mui/material/Paper"
 import Grid from "@mui/material/Grid2"
 import { styled } from "@mui/material/styles"
 import EditIcon from "@mui/icons-material/Edit"
-
-
+import TodoEditModal from "./TodoEditModal"
 
 const style = {
   position: "absolute",
@@ -27,7 +26,15 @@ const style = {
 }
 
 const TodoPreviewModal = ({ show, handleShowModal, data }) => {
-  const [isEditable,setIsEditable] = React.useState(false)
+  const [isEditable, setIsEditable] = React.useState(false)
+
+
+ 
+
+  const handleCloseModal = () => {
+    setIsEditable(false)
+    handleShowModal()
+  }
   return (
     <div>
       <Modal
@@ -38,15 +45,25 @@ const TodoPreviewModal = ({ show, handleShowModal, data }) => {
       >
         <Box sx={style}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              {data.todoName}
-            </Typography>
-            <IconButton aria-label="close" onClick={handleShowModal}>
+            {!isEditable && (
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                {data.todoName}
+              </Typography>
+            )}
+            
+            {isEditable && (
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Update
+              </Typography>
+            )}
+           
+
+            <IconButton aria-label="close" onClick={handleCloseModal}>
               <CloseIcon />
             </IconButton>
           </Box>
 
-          <Stack sx={{ display: "flex" }} spacing={3}>
+          {!isEditable && <Stack sx={{ display: "flex" }} spacing={3}>
             <Box sx={{ flexGrow: 1 }}>
               <Box sx={{ flexGrow: 1 }}>
                 <Grid
@@ -63,8 +80,9 @@ const TodoPreviewModal = ({ show, handleShowModal, data }) => {
                     label="Edit Todo"
                     variant="outlined"
                     icon={<EditIcon />}
-                    onClick={() => {}}
+                    onClick={() => setIsEditable(true)}
                   />
+                  
                 </Grid>
               </Box>
             </Box>
@@ -76,7 +94,10 @@ const TodoPreviewModal = ({ show, handleShowModal, data }) => {
                 />
               )}
             </Box>
-          </Stack>
+
+            
+          </Stack>}
+              {isEditable && <TodoEditModal {...{ show, handleShowModal, data,setIsEditable }}/>}
         </Box>
       </Modal>
     </div>

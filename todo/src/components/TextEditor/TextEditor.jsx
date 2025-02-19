@@ -1,11 +1,12 @@
-import React, { useState, useImperativeHandle, forwardRef } from "react"
+import React, { useImperativeHandle, forwardRef, useEffect, useState } from "react"
 import { useQuill } from "react-quilljs"
-import "quill/dist/quill.snow.css" // Add css for snow theme
+import "quill/dist/quill.snow.css"
 
 const TextEditor = forwardRef((props, ref) => {
   const { quill, quillRef } = useQuill()
+  const [pendingHTML, setPendingHTML] = useState("")
 
-  // Expose clearText method to parent component via ref
+  // Expose methods to parent
   useImperativeHandle(ref, () => ({
     clearText: () => {
       if (quill) {
@@ -13,19 +14,26 @@ const TextEditor = forwardRef((props, ref) => {
       }
     },
     getHTMLContent: () => {
-        if (quill) {
-            // Get the full HTML content (including tags)
-            return quill.root.innerHTML
-          }
-          return "" // Return empty string if quill is not initialized
+      return quill ? quill.root.innerHTML : "" // Get full HTML content
+    },
+    setHTMLContent: (html) => {
+      if (quill) {
+        quill.clipboard.dangerouslyPasteHTML(html) // Properly insert HTML content
+      } else {
+        setPendingHTML(html) // Store HTML until Quill is ready
       }
+    },
   }))
 
-  return (
-    <div>
-      <div ref={quillRef} style={{height:150}}/>
-    </div>
-  )
+  // When Quill is ready, insert stored content
+  useEffect(() => {
+    if (quill && pendingHTML) {
+      quill.clipboard.dangerouslyPasteHTML(pendingHTML)
+      setPendingHTML("") // Clear pending state after applying content
+    }
+  }, [quill, pendingHTML]) // Runs when Quill or `pendingHTML` updates
+
+  return <div ref={quillRef} style={{ height: 150 }} />
 })
 
 export default TextEditor

@@ -39,7 +39,7 @@ async function updateObjectInArrayInField(key, itemId, updatedFields) {
       const arrayField = docData[key] || [];
 
       // Find the index of the object in the array that has the matching id
-      const index = arrayField.findIndex((item) => item.id === itemId);
+      const index = arrayField.findIndex((item) => item.tid === itemId);
 
       if (index !== -1) {
         // If the object with the matching id is found, update it
