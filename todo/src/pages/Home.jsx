@@ -9,23 +9,41 @@ import AddTodoModal from "../components/Modals/AddTodoModal"
 import CategoryModal from "../components/Modals/CreateCategoryModal"
 import TodoList from "../components/TodoList"
 import NavigationDrawer from "../components/Drawer/NavigationDrawer"
+import TodoPreviewModal from "../components/Modals/TodoPreviewModal/TodoPreviewModal";
 
 import { useSelector, useDispatch } from "react-redux";
 import { addCategory } from "../features/todos/categorySlice"
-import { getAllDataFromField } from "../firebase/fieldOperations/fieldOperations";
+import { getAllDataFromField} from "../firebase/fieldOperations/fieldOperations";
 import { addTodo } from "../features/todos/todoSlice";
+import { getObjectInArrayInFieldByCondition } from "../firebase/fieldOperations/arrayInFieldOperations";
 
 function Home() {
   const modals = {
     categories: false,
     addTodo: false,
     drawer: false,
+    todoPreview:false
   }
   const [showModal, setShowModal] = React.useState(modals)
   const [categories, setCategories] = React.useState(null)
+  const [selectedTodo,setSelectedTodo]= React.useState({})
   const dispatch = useDispatch();
 
- 
+ const handleTodoPreview = async(data)=>{
+  const {tid} = data
+  let htmlContentResult = null
+  try{
+      htmlContentResult = await getObjectInArrayInFieldByCondition('contents','tid','==',tid)
+      const completeTodo = {...data,contents:htmlContentResult[0]}
+      console.log('complete todo',completeTodo)
+      setSelectedTodo(completeTodo)
+      handleModal("todoPreview")
+  }catch(e){
+    console.log(e)
+  }
+
+  
+ }
 
   const handleModal = (target) => {
     setShowModal((prev) => ({ ...prev, [target]: !prev[target] }))
@@ -57,6 +75,12 @@ function Home() {
         show={showModal.addTodo}
         handleShowModal={() => handleModal("addTodo")}
       />
+
+      <TodoPreviewModal
+      show={showModal.todoPreview}
+      data={selectedTodo}
+      handleShowModal={() => handleModal("todoPreview")}
+      />
       <CategoryModal
         show={showModal.categories}
         handleShowModal={() => handleModal("categories")}
@@ -70,7 +94,7 @@ function Home() {
             </Box>
           </Box>
 
-          <TodoList catId={categories}/>
+          <TodoList catId={categories} setTodoForPreview={handleTodoPreview}/>
         </Stack>
       </Box>
     </Box>

@@ -137,7 +137,7 @@ async function getDataFromFieldById(fieldName, id) {
         const fieldData = docData[fieldName]
 
         // Find the object in the array based on the ID
-        const result = fieldData.find((item) => item.id === id) // Assuming 'cid' is the ID field
+        const result = fieldData.find((item) => item.tid === id) // Assuming 'cid' is the ID field
 
         if (result) {
           console.log(`${fieldName} object with ID ${id}:`, result)

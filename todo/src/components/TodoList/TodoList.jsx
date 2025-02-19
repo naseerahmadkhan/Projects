@@ -8,7 +8,7 @@ import ListItemText from '@mui/material/ListItemText';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import { useSelector } from 'react-redux';
 
-export default function TodoList({catId}) {
+export default function TodoList({catId,setTodoForPreview}) {
   // const list = Array.from({length:10},(_,i)=>i+1)
   const todos = useSelector((state) => state.todo.todos);
   console.log('todos>>>',todos)
@@ -20,7 +20,7 @@ export default function TodoList({catId}) {
         .map((item,index)=>{
             return <List key={index}>
             <ListItem disablePadding>
-              <ListItemButton>
+              <ListItemButton onClick={()=>setTodoForPreview(item)}>
                 <ListItemIcon>
                   <PlaylistAddCheckIcon />
                 </ListItemIcon>

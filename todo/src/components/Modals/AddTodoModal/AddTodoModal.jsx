@@ -61,7 +61,7 @@ export default function AddTodoModal({ show, handleShowModal }) {
     let htmlContent = textEditorRef.current.getHTMLContent();
     setHtml(htmlContent);
   
-    const todoPayload = { todoName: todoRef.current.value, date: Date.now(), tid: todos.length + 1,cid:catId };
+    const todoPayload = { todoName: todoRef.current.value, date: Date.now(), tid: todos.length + 1,cid:catId ,completed:false};
     const contentPayload = {cid:catId,tid:todos.length+1,html:htmlContent,date: Date.now()}
   
     // Wait for the API call to complete before closing modal
