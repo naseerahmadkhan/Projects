@@ -2,12 +2,12 @@ import React from 'react'
 import Drawer from "@mui/material/Drawer"
 import DrawerList from './DrawerList'
 
-const NavigationDrawer = ({handleDrawer,show}) => {
+const NavigationDrawer = ({handleHideModal,handleShowModal,show}) => {
   
 
   return (
-    <Drawer open={show} onClose={()=>handleDrawer('drawer')}>
-        <DrawerList handleDrawer={handleDrawer}/>
+    <Drawer open={show} onClose={()=>handleHideModal('drawer')}>
+        <DrawerList handleDrawer={handleShowModal}/>
       </Drawer>
   )
 }

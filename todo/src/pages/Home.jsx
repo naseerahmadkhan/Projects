@@ -4,13 +4,11 @@ import "../styles/App.css"
 import Box from "@mui/material/Box"
 import Stack from "@mui/material/Stack"
 import AppBar from "../components/AppBar"
-import Categories from "../components/Categories"
 import AddTodoModal from "../components/Modals/AddTodoModal"
 import CategoryModal from "../components/Modals/CreateCategoryModal"
 import TodoList from "../components/TodoList"
 import NavigationDrawer from "../components/Drawer/NavigationDrawer"
 import TodoPreviewModal from "../components/Modals/TodoPreviewModal/TodoPreviewModal"
-
 import { useSelector, useDispatch } from "react-redux"
 import { addCategory } from "../features/todos/categorySlice"
 import { getAllDataFromField } from "../firebase/fieldOperations/fieldOperations"
@@ -19,12 +17,23 @@ import {
   getObjectInArrayInFieldByCondition,
   deleteObjectInArrayInField,
 } from "../firebase/fieldOperations/arrayInFieldOperations"
-import { Button } from "@mui/material"
 import EditIcon from "@mui/icons-material/Edit"
 import DeleteIcon from "@mui/icons-material/Delete"
 import Autocomplete from "@mui/material/Autocomplete"
-import { IconButton, TextField, InputAdornment } from "@mui/material";
+import { Button, IconButton, TextField } from "@mui/material"
 
+import Grid from "@mui/material/Grid2"
+import Typography from "@mui/material/Typography"
+import List from "@mui/material/List"
+import ListItem from "@mui/material/ListItem"
+import ListItemAvatar from "@mui/material/ListItemAvatar"
+import ListItemIcon from "@mui/material/ListItemIcon"
+import ListItemText from "@mui/material/ListItemText"
+import Avatar from "@mui/material/Avatar"
+import { styled } from "@mui/material/styles"
+import FolderIcon from "@mui/icons-material/Folder"
+import ListItemButton from "@mui/material/ListItemButton"
+import CategoryList from "../components/CategoryList"
 function Home() {
   const modals = {
     categories: false,
@@ -32,18 +41,29 @@ function Home() {
     drawer: false,
     todoPreview: false,
   }
+
+  
   const [showModal, setShowModal] = React.useState(modals)
-  const [categories, setCategories] = React.useState(null)
+  const [catId, setCatId] = React.useState(null)
   const [selectedTodo, setSelectedTodo] = React.useState({})
   const dispatch = useDispatch()
   const todos = useSelector((state) => state.todo.todos)
   const catList = useSelector((state) => state.categories.categories) || []
+  const [isEditable,setIsEditable] = React.useState({category:{selectedCatId:null}})
 
-  const handleDeleteCategory = async () => {
-    let filteredTodos = todos.filter((item) => item.cid == categories)
+ 
+  
+
+  const handleEditCategory = async(cid)=>{
+    setIsEditable((prev)=>({category:{selectedCatId:cid}}))
+    handleModal("categories")
+  }
+
+  const handleDeleteCategory = async (catId) => {
+    let filteredTodos = todos.filter((item) => item.cid == catId)
     if (filteredTodos.length == 0) {
       try {
-        await deleteObjectInArrayInField("categories", "cid", categories)
+        await deleteObjectInArrayInField("categories", "cid", catId)
         await fetchDatafromDbAndSaveInReduxStore("categories", addCategory)
       } catch (e) {
         alert(e)
@@ -64,7 +84,6 @@ function Home() {
         tid
       )
       const completeTodo = { ...data, contents: htmlContentResult[0] }
-      console.log("complete todo", completeTodo)
       setSelectedTodo(completeTodo)
       handleModal("todoPreview")
     } catch (e) {
@@ -73,7 +92,18 @@ function Home() {
   }
 
   const handleModal = (target) => {
+    
     setShowModal((prev) => ({ ...prev, [target]: !prev[target] }))
+  }
+
+  const handleHideModal  = (target) => {
+    setIsEditable((prev)=>({category:{selectedCatId:null}}))
+    setShowModal((prev) => ({ ...prev, [target]: false }))
+  }
+
+  const handleShowModal  = (target) => {
+    
+    setShowModal((prev) => ({ ...prev, [target]: true }))
   }
 
   const fetchDatafromDbAndSaveInReduxStore = async (field, action) => {
@@ -92,11 +122,15 @@ function Home() {
 
   return (
     <Box>
-      <AppBar handleModal={(targetName) => handleModal(targetName)} />
+      <AppBar 
+      handleShowModal={(value)=>handleShowModal(value)} 
+      handleHideModal={(value)=>handleHideModal(value)} 
+      />
 
       <NavigationDrawer
         show={showModal.drawer}
-        handleDrawer={() => handleModal("drawer")}
+        handleHideModal={()=>handleHideModal("drawer")} 
+        handleShowModal={()=>handleShowModal("drawer")} 
       />
       <AddTodoModal
         show={showModal.addTodo}
@@ -110,40 +144,20 @@ function Home() {
       />
       <CategoryModal
         show={showModal.categories}
-        handleShowModal={() => handleModal("categories")}
+        handleHideModal={()=>handleHideModal("categories")}
+        catId={catId}
+        state={isEditable}
+        setState={setIsEditable}
       />
 
-      <Box sx={{ padding: "25px", display: "flex", flexDirection: "column" }}>
+      <Box sx={{ marginTop: "5%", display: "flex", flexDirection: "column" }}>
         <Stack sx={{ alignItems: "center" }} spacing={3}>
-          <Box sx={{ display: "flex", width: 2/3, gap: 1 }}>
-            <Box sx={{ display: "flex", flex: 1,justifyContent:'center', marginTop: 10 }}>
-              <Autocomplete
-                disablePortal
-                options={catList || []} // Ensure options is always an array
-                getOptionLabel={(option) => (option?.cname ? option.cname  : "")} // Prevent errors
-                value={catList.find((cat) => cat.cid === categories) || null} // Always return an object or null
-                onChange={(event, value) => {
-                  setCategories(value ? value.cid : null) // Ensure controlled state
-                  console.log("Selected Category:", value)
-                }}
-                sx={{ width: "80%" }} // Make Autocomplete full width
-                renderInput={(params) => (
-                  <TextField {...params} label="Categories" />
-                  
-                )}
-              />
-              {categories &&  <IconButton aria-label="close" onClick={()=>console.log(categories)}>
-              <EditIcon />
-            </IconButton>}
-
-            {categories && <IconButton aria-label="close" onClick={()=>handleDeleteCategory()}>
-              <DeleteIcon />
-            </IconButton>}
-             
-            </Box>
-          </Box>
-
-          <TodoList catId={categories} setTodoForPreview={handleTodoPreview} />
+          <Button variant="contained" onClick={() => setCatId(null)}>
+            Back
+          </Button>
+          <CategoryList {...{ catList, setCatId, handleDeleteCategory,handleEditCategory}} />
+          <TodoList catId={catId} setTodoForPreview={handleTodoPreview} 
+          />
         </Stack>
       </Box>
     </Box>

@@ -37,8 +37,8 @@ const TodoEditModal = ({ data,handleShowModal,setIsEditable }) => {
     const updatedTodo = {completed:isCompleted,todoName:updatedTodoName,date: Date.now()}
     try{
         const tid = data.tid
-        await updateObjectInArrayInField('todos',tid,updatedTodo)
-        await updateObjectInArrayInField('contents',tid,{html:updateHtml})
+        await updateObjectInArrayInField('todos','tid',tid,updatedTodo)
+        await updateObjectInArrayInField('contents','tid',tid,{html:updateHtml})
         const resultData = await getAllDataFromField('todos');
       dispatch(addTodo(resultData));
         setIsEditable(false);

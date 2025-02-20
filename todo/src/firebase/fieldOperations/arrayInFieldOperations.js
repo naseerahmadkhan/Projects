@@ -25,7 +25,7 @@ async function addObjectInArrayInField(key, listItem) {
 
 
 
-async function updateObjectInArrayInField(key, itemId, updatedFields) {
+async function updateObjectInArrayInField(key, idName,itemId, updatedFields) {
   try {
     // Create a reference to the document you want to update
     const docRef = doc(db, COLLECTION, DOCUMENT);
@@ -39,7 +39,7 @@ async function updateObjectInArrayInField(key, itemId, updatedFields) {
       const arrayField = docData[key] || [];
 
       // Find the index of the object in the array that has the matching id
-      const index = arrayField.findIndex((item) => item.tid === itemId);
+      const index = arrayField.findIndex((item) => item[idName] === itemId);
 
       if (index !== -1) {
         // If the object with the matching id is found, update it

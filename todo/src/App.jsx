@@ -33,7 +33,7 @@ function App() {
 
 
   // addObjectInArrayInField('category',{id:5,name:'next.js'})
-  // updateObjectInArrayInField('category',5,{name:'***js',active:true})
+  // updateObjectInArrayInField('category','cid',5,{name:'***js',active:true})
   // deleteObjectInArrayInField('categories','cid',categories)
   // getObjectInArrayInFieldByCondition('category','completed','==',true)
 

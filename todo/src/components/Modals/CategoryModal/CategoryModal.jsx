@@ -9,9 +9,10 @@ import IconButton from "@mui/material/IconButton"
 import CloseIcon from "@mui/icons-material/Close"
 import { addCategoryAsync, addCategory  } from "../../../features/todos/categorySlice"
 import { useDispatch,useSelector } from 'react-redux'; // Correct import
-import { addObjectInArrayInField,updateObjectInArrayInField} from "../../../firebase/fieldOperations/arrayInFieldOperations"
+import { addObjectInArrayInField,} from "../../../firebase/fieldOperations/arrayInFieldOperations"
 import { getAllDataFromField } from "../../../firebase/fieldOperations/fieldOperations"
 import logger from "../../../utils/logger"
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -24,21 +25,11 @@ const style = {
   p: 4,
 }
 
-export default function CategoryModal({ show, handleShowModal,handleHideModal,state,setState }) {
-  const catRef = React.useRef(null);
- 
+export default function CategoryModal({ show, handleShowModal }) {
+  const catRef = React.useRef();
   const [error, setError] = React.useState('');
   const dispatch = useDispatch(); // Call useDispatch hook outside of the function
   const categories = useSelector((state) => state.categories.categories);
-  let currentCategoryName = null
-  let catID;
-  let selectedCategory;
-  if(state.category.selectedCatId){
-    catID = state.category.selectedCatId
-    selectedCategory = categories.filter((cat)=>cat.cid ==catID )
-    currentCategoryName = selectedCategory[0].cname 
-  }
-  
   
 
   const checkMinLength = (categoryName,minLength)=>{
@@ -83,44 +74,10 @@ export default function CategoryModal({ show, handleShowModal,handleHideModal,st
     }
   }
 
-  const handleSubmit = async(e)=>{
-    e.preventDefault();
-    if(currentCategoryName){
-      await handleUpdate()
-    }else{
-      await handleCreate()
-    }
-  }
-
-  const fetchDatafromDbAndSaveInReduxStore = async (field, action) => {
-    try {
-      const resultData = await getAllDataFromField(field)
-      dispatch(action(resultData))
-    } catch (error) {
-      console.error("Error fetching categories:", error)
-    }
-  }
-
-  const handleUpdate = async()=>{
-    setError(''); // Reset previous error state
-    let updatedCategoryName = catRef.current.value; 
-    console.log('update>>>>',catID,selectedCategory,updatedCategoryName)
-
-    checkMinLength(updatedCategoryName,2)
-    try{
-      await updateObjectInArrayInField('categories','cid',catID,{cname:updatedCategoryName,date: Date.now()})
-      await fetchDatafromDbAndSaveInReduxStore("categories", addCategory)
-      catRef.current.value = ""; // Clear the input field
-    handleHideModal();
-    alert('data updated successfully!')
-    }catch(e){
-      alert(e)
-    }
-
-  }
 
   // Handle form submission
-  const handleCreate = async() => {
+  const handleSubmit = async(e) => {
+    e.preventDefault();
     setError(''); // Reset previous error state
     let categoryName = catRef.current.value;    
     checkMinLength(categoryName,2)
@@ -128,7 +85,7 @@ export default function CategoryModal({ show, handleShowModal,handleHideModal,st
     // sendDataToReduxStoreAndThenSaveInDB(categoryName)
     await sendDataToDbAndThenUpdateReduxStore(categoryName)
     catRef.current.value = ""; // Clear the input field
-    handleHideModal();
+    handleShowModal();
     alert('data added successfully!')
   }
 
@@ -143,10 +100,10 @@ export default function CategoryModal({ show, handleShowModal,handleHideModal,st
         <Box sx={style} component="form" onSubmit={handleSubmit}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
-             { currentCategoryName ?("Update Category"):("Create Category")}
+              Create Category
             </Typography>
 
-            <IconButton aria-label="close" onClick={handleHideModal}>
+            <IconButton aria-label="close" onClick={handleShowModal}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -155,7 +112,6 @@ export default function CategoryModal({ show, handleShowModal,handleHideModal,st
             <TextField
               inputRef={catRef}
               required
-              defaultValue={currentCategoryName}
               id="category-name"
               label="Category Name"
               variant="filled"
@@ -167,13 +123,11 @@ export default function CategoryModal({ show, handleShowModal,handleHideModal,st
             />
 
             <Button type="submit" fullWidth sx={{ height: 50 }} variant="contained">
-            { currentCategoryName ?("Update"):("Create")}
+              Create
             </Button>
           </Stack>
         </Box>
       </Modal>
     </div>
   )
-
-
 }
