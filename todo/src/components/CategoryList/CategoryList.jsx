@@ -25,9 +25,7 @@ const CategoryList = ({catList,setCatId,handleDeleteCategory,handleEditCategory}
     <Box sx={{width:"80%"}}>
           <Grid xs={12} md={12}>
           
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-              Categories
-            </Typography>
+          
           <List>
             {
               catList.map((category,index)=>{

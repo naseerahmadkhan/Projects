@@ -152,10 +152,13 @@ function Home() {
 
       <Box sx={{ marginTop: "5%", display: "flex", flexDirection: "column" }}>
         <Stack sx={{ alignItems: "center" }} spacing={3}>
-          <Button variant="contained" onClick={() => setCatId(null)}>
+          <Button variant="contained" disabled={catId?(false):(true)} onClick={() => setCatId(null)}>
             Back
           </Button>
-          <CategoryList {...{ catList, setCatId, handleDeleteCategory,handleEditCategory}} />
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+              {!catId?("Categories"):("Todos")}
+            </Typography>
+          {!catId && <CategoryList {...{ catList, setCatId, handleDeleteCategory,handleEditCategory}} />}
           <TodoList catId={catId} setTodoForPreview={handleTodoPreview} 
           />
         </Stack>
