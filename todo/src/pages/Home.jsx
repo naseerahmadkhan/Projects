@@ -34,7 +34,7 @@ import { styled } from "@mui/material/styles"
 import FolderIcon from "@mui/icons-material/Folder"
 import ListItemButton from "@mui/material/ListItemButton"
 import CategoryList from "../components/CategoryList"
-function Home() {
+function Home({logout}) {
   const modals = {
     categories: false,
     addTodo: false,
@@ -125,6 +125,7 @@ function Home() {
       <AppBar 
       handleShowModal={(value)=>handleShowModal(value)} 
       handleHideModal={(value)=>handleHideModal(value)} 
+      logout={logout}
       />
 
       <NavigationDrawer

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,Suspense } from "react";
 import Home from "./pages/Home"
 import store from "./redux/store"
 import { Provider } from "react-redux"
-import {checkUserStatus} from './firebase/userAuthOperations/userAuthOperations'
+import {checkUserStatus,handleLoginWithUserAndPassword,logOut} from './firebase/userAuthOperations/userAuthOperations'
 import {
           addObjectInArrayInField,
           updateObjectInArrayInField,
@@ -28,8 +28,8 @@ import {
   checkAndCreateEmptyDocument
 } from './firebase/documentOperations/documentOperations'
 
+import Login from "./pages/login";
 function App() {
-
 
 
   // addObjectInArrayInField('category',{id:5,name:'next.js'})
@@ -45,7 +45,7 @@ function App() {
   // updateAllDataInField('images',[{img:'final'}])
   // removeFieldWithData('images')
   
-  // checkUserStatus()
+  checkUserStatus()
   // getAllDocumentsFromCollection('todo')
   // getDocumentFields('todolist','todo')
   // addEmptyDocumentWithCustomId('todo','naseer4uplus@gmail.com')
@@ -53,11 +53,52 @@ function App() {
 
   // checkAndCreateEmptyDocument('todo','naseer4uplus@gmail.com')
 
- 
+const [isAuth,setIsAuth] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const handleLogout = async()=>{
+    await logOut();
+    setIsAuth(null)
+  }
+
+  const handleAuth = async(email,pwd)=>{
+    let result = await handleLoginWithUserAndPassword(email,pwd)
+    console.log('is auth>>>',result)
+    setIsAuth(result.email)
+    // setIsAuth(checkUserStatus())
+
+  }
+
+  useEffect(()=>{
+
+    async function checkIsAuthenticated(){
+      try{
+        let result = await checkUserStatus();
+        if(result?.user){
+
+          setIsAuth(result.user)
+        }
+        setLoading(false)
+
+      }catch(e){
+        // alert(JSON.stringify(e))
+        setLoading(false)
+
+      }
+    }
+    checkIsAuthenticated()
+
+  },[isAuth])
+
+  if (loading) {
+    return <div>Loading...</div>; // Show loading state while checking auth
+  }
+
  
   return (
     <Provider store={store}>
-      <Home />
+      {/* <Home /> */}
+     {isAuth ? <Home logout={handleLogout} /> : <Login handleAuth={handleAuth} />}
     </Provider>
   )
 }

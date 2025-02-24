@@ -1,5 +1,5 @@
 import {auth} from '../../config/firebaseConfig/firebaseConfig'
-import {signInWithEmailAndPassword,onAuthStateChanged } from "firebase/auth"
+import {signInWithEmailAndPassword,onAuthStateChanged,signOut } from "firebase/auth"
 
 
 const checkUserStatus = () => {
@@ -27,11 +27,12 @@ const checkUserStatus = () => {
           console.log("ID Token (Access Token):", idToken);
           resolve({ user: currentUser, idToken });  // Resolve with user and token
         } catch (error) {
-          reject("Error fetching ID token: " + error.message);
+          //Error fetching ID token: 
+          reject({error:error.message});
         }
       } else {
         // If no user is signed in, reject with an error message
-        reject("No user is signed in.");
+        reject({error:"No user is signed in."});
       }
 
       // Unsubscribe from the listener to avoid memory leaks
@@ -40,7 +41,7 @@ const checkUserStatus = () => {
   });
 }
 
-const handleLoginWithUserAndPassword = async (email="naseer4uplus@gmail.com",password="naseer819") => {
+const handleLoginWithUserAndPassword = async (email,password) => {
   try {
     // Step 2: If no user is signed in, proceed with login
     const userCredential = await signInWithEmailAndPassword(
@@ -50,12 +51,24 @@ const handleLoginWithUserAndPassword = async (email="naseer4uplus@gmail.com",pas
     )
     const newUser = userCredential.user
     const token = await newUser.getIdToken() // Get the Firebase ID token
-    console.log("New Token: ", token) // This is your Firebase ID Token
+    return newUser
   } catch (error) {
-    console.log("Error: ", error.message)
+    return error
   }
 }
 
 
+const logOut = async() =>{
+  try {
+    await signOut(auth);
+    console.log("User successfully signed out.");
+  } catch (error) {
+    console.error("Logout failed:", error.message);
+    alert("An error occurred while logging out. Please try again.");
+  }
 
-export { handleLoginWithUserAndPassword,checkUserStatus }
+}
+
+
+
+export { handleLoginWithUserAndPassword,checkUserStatus,logOut }
