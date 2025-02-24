@@ -6,8 +6,8 @@ import ListItem from "@mui/material/ListItem"
 import ListItemButton from "@mui/material/ListItemButton"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
-import InboxIcon from "@mui/icons-material/MoveToInbox"
-import MailIcon from "@mui/icons-material/Mail"
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 const DrawerList = ({handleDrawer}) => {
   return (
     <Box
@@ -16,29 +16,25 @@ const DrawerList = ({handleDrawer}) => {
           onClick={() => handleDrawer("drawer")}
         >
           <List>
-            {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
+          <ListItem key={'1'} disablePadding>
+                <ListItemButton  onClick={() => {handleDrawer("categories")}}>
                   <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                    <CreateNewFolderIcon/>
                   </ListItemIcon>
-                  <ListItemText primary={text} />
+                  <ListItemText primary={"Add Category"} />
                 </ListItemButton>
               </ListItem>
-            ))}
           </List>
           <Divider />
           <List>
-            {["All mail", "Trash", "Spam"].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
+          <ListItem key={'2'} disablePadding>
+                <ListItemButton onClick={() => handleDrawer("addTodo")}>
                   <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                    <NoteAddIcon/>
                   </ListItemIcon>
-                  <ListItemText primary={text} />
+                  <ListItemText primary={"Add Todo"} />
                 </ListItemButton>
               </ListItem>
-            ))}
           </List>
         </Box>
   )

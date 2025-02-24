@@ -129,8 +129,8 @@ function Home() {
 
       <NavigationDrawer
         show={showModal.drawer}
-        handleHideModal={()=>handleHideModal("drawer")} 
-        handleShowModal={()=>handleShowModal("drawer")} 
+        handleHideModal={(value)=>handleHideModal(value)} 
+        handleShowModal={(value)=>handleShowModal(value)} 
       />
       <AddTodoModal
         show={showModal.addTodo}
