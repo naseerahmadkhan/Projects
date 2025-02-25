@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, {useEffect} from "react"
 
 import "../styles/App.css"
 import Box from "@mui/material/Box"
@@ -17,24 +17,14 @@ import {
   getObjectInArrayInFieldByCondition,
   deleteObjectInArrayInField,
 } from "../firebase/fieldOperations/arrayInFieldOperations"
-import EditIcon from "@mui/icons-material/Edit"
-import DeleteIcon from "@mui/icons-material/Delete"
-import Autocomplete from "@mui/material/Autocomplete"
-import { Button, IconButton, TextField } from "@mui/material"
 
-import Grid from "@mui/material/Grid2"
+import { Button } from "@mui/material"
+
 import Typography from "@mui/material/Typography"
-import List from "@mui/material/List"
-import ListItem from "@mui/material/ListItem"
-import ListItemAvatar from "@mui/material/ListItemAvatar"
-import ListItemIcon from "@mui/material/ListItemIcon"
-import ListItemText from "@mui/material/ListItemText"
-import Avatar from "@mui/material/Avatar"
-import { styled } from "@mui/material/styles"
-import FolderIcon from "@mui/icons-material/Folder"
-import ListItemButton from "@mui/material/ListItemButton"
+
 import CategoryList from "../components/CategoryList"
-function Home({logout}) {
+import Loader from "../components/Loader/Loader"
+function Home({ logout }) {
   const modals = {
     categories: false,
     addTodo: false,
@@ -42,20 +32,19 @@ function Home({logout}) {
     todoPreview: false,
   }
 
-  
   const [showModal, setShowModal] = React.useState(modals)
   const [catId, setCatId] = React.useState(null)
   const [selectedTodo, setSelectedTodo] = React.useState({})
   const dispatch = useDispatch()
   const todos = useSelector((state) => state.todo.todos)
   const catList = useSelector((state) => state.categories.categories) || []
-  const [isEditable,setIsEditable] = React.useState({category:{selectedCatId:null}})
+  const [isEditable, setIsEditable] = React.useState({
+    category: { selectedCatId: null },
+  })
+  const [loading, setIsLoading] = React.useState(false)
 
- 
-  
-
-  const handleEditCategory = async(cid)=>{
-    setIsEditable((prev)=>({category:{selectedCatId:cid}}))
+  const handleEditCategory = async (cid) => {
+    setIsEditable((prev) => ({ category: { selectedCatId: cid } }))
     handleModal("categories")
   }
 
@@ -74,6 +63,7 @@ function Home({logout}) {
   }
 
   const handleTodoPreview = async (data) => {
+    setIsLoading(true)
     const { tid } = data
     let htmlContentResult = null
     try {
@@ -86,30 +76,31 @@ function Home({logout}) {
       const completeTodo = { ...data, contents: htmlContentResult[0] }
       setSelectedTodo(completeTodo)
       handleModal("todoPreview")
+      setIsLoading(false)
     } catch (e) {
       console.log(e)
     }
   }
 
   const handleModal = (target) => {
-    
     setShowModal((prev) => ({ ...prev, [target]: !prev[target] }))
   }
 
-  const handleHideModal  = (target) => {
-    setIsEditable((prev)=>({category:{selectedCatId:null}}))
+  const handleHideModal = (target) => {
+    setIsEditable((prev) => ({ category: { selectedCatId: null } }))
     setShowModal((prev) => ({ ...prev, [target]: false }))
   }
 
-  const handleShowModal  = (target) => {
-    
+  const handleShowModal = (target) => {
     setShowModal((prev) => ({ ...prev, [target]: true }))
   }
 
   const fetchDatafromDbAndSaveInReduxStore = async (field, action) => {
     try {
+      setIsLoading(true)
       const resultData = await getAllDataFromField(field)
       dispatch(action(resultData))
+      setIsLoading(false)
     } catch (error) {
       console.error("Error fetching categories:", error)
     }
@@ -122,16 +113,17 @@ function Home({logout}) {
 
   return (
     <Box>
-      <AppBar 
-      handleShowModal={(value)=>handleShowModal(value)} 
-      handleHideModal={(value)=>handleHideModal(value)} 
-      logout={logout}
+      <Loader open={loading} />
+      <AppBar
+        handleShowModal={(value) => handleShowModal(value)}
+        handleHideModal={(value) => handleHideModal(value)}
+        logout={logout}
       />
 
       <NavigationDrawer
         show={showModal.drawer}
-        handleHideModal={(value)=>handleHideModal(value)} 
-        handleShowModal={(value)=>handleShowModal(value)} 
+        handleHideModal={(value) => handleHideModal(value)}
+        handleShowModal={(value) => handleShowModal(value)}
       />
       <AddTodoModal
         show={showModal.addTodo}
@@ -145,7 +137,7 @@ function Home({logout}) {
       />
       <CategoryModal
         show={showModal.categories}
-        handleHideModal={()=>handleHideModal("categories")}
+        handleHideModal={() => handleHideModal("categories")}
         catId={catId}
         state={isEditable}
         setState={setIsEditable}
@@ -153,15 +145,27 @@ function Home({logout}) {
 
       <Box sx={{ marginTop: "5%", display: "flex", flexDirection: "column" }}>
         <Stack sx={{ alignItems: "center" }} spacing={3}>
-          <Button variant="contained" disabled={catId?(false):(true)} onClick={() => setCatId(null)}>
+          <Button
+            variant="contained"
+            disabled={catId ? false : true}
+            onClick={() => setCatId(null)}
+          >
             Back
           </Button>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-              {!catId?("Categories"):("Todos")}
-            </Typography>
-          {!catId && <CategoryList {...{ catList, setCatId, handleDeleteCategory,handleEditCategory}} />}
-          <TodoList catId={catId} setTodoForPreview={handleTodoPreview} 
-          />
+            {!catId ? "Categories" : "Todos"}
+          </Typography>
+          {!catId && (
+            <CategoryList
+              {...{
+                catList,
+                setCatId,
+                handleDeleteCategory,
+                handleEditCategory,
+              }}
+            />
+          )}
+          <TodoList catId={catId} setTodoForPreview={handleTodoPreview} />
         </Stack>
       </Box>
     </Box>

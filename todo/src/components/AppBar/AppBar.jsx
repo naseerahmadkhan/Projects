@@ -5,7 +5,7 @@ import AppBar from "@mui/material/AppBar"
 import Toolbar from "@mui/material/Toolbar"
 import IconButton from "@mui/material/IconButton"
 import MenuIcon from "@mui/icons-material/Menu"
-const TopAppBar = ({handleShowModal,logout}) => {
+const TopAppBar = ({ handleShowModal, logout }) => {
   return (
     <AppBar position="fixed">
       <Toolbar>
@@ -15,15 +15,16 @@ const TopAppBar = ({handleShowModal,logout}) => {
           color="inherit"
           aria-label="menu"
           sx={{ mr: 2 }}
-          onClick={()=>handleShowModal('drawer')}
+          onClick={() => handleShowModal("drawer")}
         >
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Todo App
         </Typography>
-        <Button color="inherit" onClick={()=>logout()}>Logout</Button>
-        
+        <Button color="inherit" onClick={() => logout()}>
+          Logout
+        </Button>
       </Toolbar>
     </AppBar>
   )
