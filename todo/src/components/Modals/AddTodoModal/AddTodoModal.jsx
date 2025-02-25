@@ -9,10 +9,11 @@ import IconButton from "@mui/material/IconButton"
 import CloseIcon from "@mui/icons-material/Close"
 import TextEditor from "../../TextEditor"
 import Categories from "../../Categories"
-import { useDispatch,useSelector } from 'react-redux'; // Correct import
+import { useDispatch, useSelector } from "react-redux" // Correct import
 import { getAllDataFromField } from "../../../firebase/fieldOperations/fieldOperations"
 import { addTodo } from "../../../features/todos/todoSlice"
 import { addObjectInArrayInField } from "../../../firebase/fieldOperations/arrayInFieldOperations"
+import Loader from "../../Loader/Loader"
 const style = {
   position: "absolute",
   top: "50%",
@@ -26,61 +27,66 @@ const style = {
 
 export default function AddTodoModal({ show, handleShowModal }) {
   const textEditorRef = React.useRef()
-  const dispatch = useDispatch(); // Call useDispatch hook outside of the function
-  const todos = useSelector((state) => state.todo.todos);
-  
+  const dispatch = useDispatch() // Call useDispatch hook outside of the function
+  const todos = useSelector((state) => state.todo.todos)
 
   const todoRef = React.useRef()
-  const [catId,setCatId] = React.useState()
-  const [html,setHtml] = React.useState("")
+  const [catId, setCatId] = React.useState()
+  const [html, setHtml] = React.useState("")
+  const [loading, setLoading] = React.useState(false)
 
-  const sendDataToDbAndThenUpdateReduxStore = async(fieldName,payload)=>{
-    try{
-     
-      await addObjectInArrayInField(fieldName, payload);
-      const resultData = await getAllDataFromField(fieldName);
-      dispatch(addTodo(resultData));
-    }catch(e){
-      logger.log('error:',e);
+  const sendDataToDbAndThenUpdateReduxStore = async (fieldName, payload) => {
+    try {
+      await addObjectInArrayInField(fieldName, payload)
+      const resultData = await getAllDataFromField(fieldName)
+      dispatch(addTodo(resultData))
+    } catch (e) {
+      logger.log("error:", e)
     }
   }
 
-
-  const sendDataToDb = async(fieldName,payload)=>{
-    try{
-     
-      await addObjectInArrayInField(fieldName, payload);
-      
-    }catch(e){
-      logger.log('error:',e);
+  const sendDataToDb = async (fieldName, payload) => {
+    try {
+      await addObjectInArrayInField(fieldName, payload)
+    } catch (e) {
+      logger.log("error:", e)
     }
   }
-
 
   const handleSubmit = async () => {
-    let htmlContent = textEditorRef.current.getHTMLContent();
-    setHtml(htmlContent);
-  
-    const todoPayload = { todoName: todoRef.current.value, date: Date.now(), tid: todos.length + 1,cid:catId ,completed:false};
-    const contentPayload = {cid:catId,tid:todos.length+1,html:htmlContent,date: Date.now()}
-  
+    setLoading(true)
+    let htmlContent = textEditorRef.current.getHTMLContent()
+    setHtml(htmlContent)
+
+    const todoPayload = {
+      todoName: todoRef.current.value,
+      date: Date.now(),
+      tid: todos.length + 1,
+      cid: catId,
+      completed: false,
+    }
+    const contentPayload = {
+      cid: catId,
+      tid: todos.length + 1,
+      html: htmlContent,
+      date: Date.now(),
+    }
+
     // Wait for the API call to complete before closing modal
     try {
-      await sendDataToDb("contents", contentPayload);
-      await sendDataToDbAndThenUpdateReduxStore("todos", todoPayload);
-      handleShowModal(); // Close modal only after API call is done
+      await sendDataToDb("contents", contentPayload)
+      await sendDataToDbAndThenUpdateReduxStore("todos", todoPayload)
+      setLoading(false)
+      alert('sucessfully added!');
+      handleShowModal() // Close modal only after API call is done
+      textEditorRef.current.clearText()
     } catch (error) {
-      console.error("Error saving todo:", error);
+      console.error("Error saving todo:", error)
     }
-  
-    textEditorRef.current.clearText();
-  };
-  
-
+    
  
+  }
 
-  
- 
   return (
     <div>
       <Modal
@@ -99,9 +105,9 @@ export default function AddTodoModal({ show, handleShowModal }) {
               <CloseIcon />
             </IconButton>
           </Box>
-
+          <Loader open={loading} /> 
           <Stack sx={{ display: "flex" }} spacing={3}>
-            <Categories categorySelected={(id) => setCatId((id))} />
+            <Categories categorySelected={(id) => setCatId(id)} />
             <TextField
               inputRef={todoRef}
               required
@@ -115,7 +121,12 @@ export default function AddTodoModal({ show, handleShowModal }) {
             />
             <TextEditor ref={textEditorRef} />
 
-            <Button fullWidth sx={{ height: 50 }} variant="contained" onClick={handleSubmit}> 
+            <Button
+              fullWidth
+              sx={{ height: 50 }}
+              variant="contained"
+              onClick={handleSubmit}
+            >
               Add
             </Button>
           </Stack>

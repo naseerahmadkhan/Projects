@@ -49,7 +49,9 @@ function Home({ logout }) {
   }
 
   const handleDeleteCategory = async (catId) => {
-    let filteredTodos = todos.filter((item) => item.cid == catId)
+    if(confirm('Are you sure you want to delete todo') === true){
+      setIsLoading(true)
+      let filteredTodos = todos.filter((item) => item.cid == catId)
     if (filteredTodos.length == 0) {
       try {
         await deleteObjectInArrayInField("categories", "cid", catId)
@@ -60,6 +62,9 @@ function Home({ logout }) {
     } else {
       alert("first remove todos from categories")
     }
+    setIsLoading(false)
+    }
+    
   }
 
   const handleTodoPreview = async (data) => {

@@ -10,11 +10,12 @@ import { updateObjectInArrayInField } from "../../../firebase/fieldOperations/ar
 import { useDispatch,useSelector } from 'react-redux'; 
 import { getAllDataFromField } from "../../../firebase/fieldOperations/fieldOperations"
 import { addTodo } from "../../../features/todos/todoSlice"
-
+import Loader from "../../Loader/Loader"
 const TodoEditModal = ({ data,handleShowModal,setIsEditable }) => {
   const todoRef = React.useRef(null)
   const textEditorRef = React.useRef(null)
   const toogleRef = React.useRef(null)
+  const [loading, setLoading] = React.useState(false)
   const dispatch = useDispatch(); // Call useDispatch hook outside of the function
 
 
@@ -30,6 +31,7 @@ const TodoEditModal = ({ data,handleShowModal,setIsEditable }) => {
   }, [data]) // Depend on isEditable
 
   const handleUpdate = async() => {
+    setLoading(true)
     const updatedTodoName = todoRef.current.value
     const updateHtml = textEditorRef.current.getHTMLContent()
     const isCompleted = toogleRef.current.checked
@@ -42,6 +44,8 @@ const TodoEditModal = ({ data,handleShowModal,setIsEditable }) => {
         const resultData = await getAllDataFromField('todos');
       dispatch(addTodo(resultData));
         setIsEditable(false);
+        setLoading(false)
+        alert('successfully updated!');
     handleShowModal();
 
     }catch(e){
@@ -55,6 +59,7 @@ const TodoEditModal = ({ data,handleShowModal,setIsEditable }) => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <Loader open={loading}/>
       <FormControl>
         <TextField
           inputRef={todoRef}
