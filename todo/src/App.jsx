@@ -67,26 +67,25 @@ function App() {
   const handleAuth = async (email, pwd) => {
     setLoading(true)
     let result = await handleLoginWithUserAndPassword(email, pwd)
-    console.log("is auth>>>", result)
-    setIsAuth(result.email)
-    // setIsAuth(checkUserStatus())
+    setIsAuth(result?.email || null)
+    setLoading(false)
   }
 
   useEffect(() => {
     async function checkIsAuthenticated() {
+      setLoading(true) // Ensure loading starts immediately
       try {
-        let result = await checkUserStatus()
+        const result = await checkUserStatus()
         if (result?.user) {
           setIsAuth(result.user)
         }
-        setLoading(false)
       } catch (e) {
-        // alert(JSON.stringify(e))
-        setLoading(false)
+        console.error("Auth check failed:", e)
       }
+      setLoading(false) // Ensure loading ends
     }
     checkIsAuthenticated()
-  }, [isAuth])
+  }, [])
 
   if (loading) {
     return <Loader open={loading} /> // Show loading state while checking auth
@@ -96,7 +95,9 @@ function App() {
     <Provider store={store}>
       {/* <Home /> */}
       {isAuth ? (
-        <Home logout={handleLogout} />
+        <Suspense fallback={<Loader open={loading} />}>
+          <Home logout={handleLogout} />
+        </Suspense>
       ) : (
         <Login handleAuth={handleAuth} />
       )}
