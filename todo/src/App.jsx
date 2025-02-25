@@ -29,6 +29,7 @@ import {
 } from './firebase/documentOperations/documentOperations'
 
 import Login from "./pages/login";
+import Loader from "./components/Loader/Loader";
 function App() {
 
 
@@ -91,7 +92,7 @@ const [isAuth,setIsAuth] = useState(null);
   },[isAuth])
 
   if (loading) {
-    return <div>Loading...</div>; // Show loading state while checking auth
+    return <Loader open={loading}/>; // Show loading state while checking auth
   }
 
  
