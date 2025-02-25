@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Suspense } from "react"
 import Home from "./pages/Home"
-import store from "./redux/store"
-import { Provider } from "react-redux"
+
 import {
   checkUserStatus,
   handleLoginWithUserAndPassword,
@@ -30,10 +29,12 @@ import {
   deleteDocument,
   checkAndCreateEmptyDocument,
 } from "./firebase/documentOperations/documentOperations"
-
+import { useDispatch,useSelector } from 'react-redux'; 
 import Login from "./pages/login"
 import Loader from "./components/Loader/Loader"
+import { setUser,handleLogout } from "./features/user/userSlice"
 function App() {
+  const dispatch = useDispatch(); // Call useDispatch hook outside of the function
   // addObjectInArrayInField('category',{id:5,name:'next.js'})
   // updateObjectInArrayInField('category','cid',5,{name:'***js',active:true})
   // deleteObjectInArrayInField('categories','cid',categories)
@@ -54,35 +55,38 @@ function App() {
 
   // checkAndCreateEmptyDocument('todo','naseer4uplus@gmail.com')
 
-  const [isAuth, setIsAuth] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const user = useSelector((state) => state.user) || {}
+  let isAuth = user.username;
+  let loading = user.loading;
 
-  const handleLogout = async () => {
-    setLoading(true)
+
+  const handleLogout2 = async () => {
+    dispatch(setUser({loading:true}))
     await logOut()
-    setIsAuth(null)
-    setLoading(false)
+    dispatch(setUser({loading:false,username:null}))
   }
 
   const handleAuth = async (email, pwd) => {
-    setLoading(true)
+    dispatch(setUser({loading:true}))
     let result = await handleLoginWithUserAndPassword(email, pwd)
-    setIsAuth(result?.email || null)
-    setLoading(false)
+    dispatch(setUser({username:result?.email,loading:false,error:null}))
   }
 
   useEffect(() => {
+   
+    console.log('user*****',user)
+
     async function checkIsAuthenticated() {
-      setLoading(true) // Ensure loading starts immediately
+      dispatch(setUser({loading:true})) // Ensure loading starts immediately
       try {
         const result = await checkUserStatus()
         if (result?.user) {
-          setIsAuth(result.user)
+          dispatch(setUser({username:result.user.email,loading:false,error:null}))
         }
       } catch (e) {
         console.error("Auth check failed:", e)
+        dispatch(setUser({loading:false}))
       }
-      setLoading(false) // Ensure loading ends
     }
     checkIsAuthenticated()
   }, [])
@@ -92,7 +96,7 @@ function App() {
   }
 
   return (
-    <Provider store={store}>
+    <div>
       {/* <Home /> */}
       {isAuth ? (
         <Suspense fallback={<Loader open={loading} />}>
@@ -101,7 +105,7 @@ function App() {
       ) : (
         <Login handleAuth={handleAuth} />
       )}
-    </Provider>
+    </div>
   )
 }
 

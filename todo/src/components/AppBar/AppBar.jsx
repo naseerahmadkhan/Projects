@@ -5,7 +5,16 @@ import AppBar from "@mui/material/AppBar"
 import Toolbar from "@mui/material/Toolbar"
 import IconButton from "@mui/material/IconButton"
 import MenuIcon from "@mui/icons-material/Menu"
-const TopAppBar = ({ handleShowModal, logout }) => {
+import { handleLogout } from "../../features/user/userSlice"
+import { useDispatch, useSelector } from "react-redux";
+const TopAppBar = ({ handleShowModal}) => {
+  const dispatch = useDispatch();
+
+
+  const logout = () => {
+    dispatch(handleLogout()); // Dispatch the async thunk
+  };
+
   return (
     <AppBar position="fixed">
       <Toolbar>
@@ -22,7 +31,7 @@ const TopAppBar = ({ handleShowModal, logout }) => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Todo App
         </Typography>
-        <Button color="inherit" onClick={() => logout()}>
+        <Button color="inherit" onClick={logout}>
           Logout
         </Button>
       </Toolbar>
