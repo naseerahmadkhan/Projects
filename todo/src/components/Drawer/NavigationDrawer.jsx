@@ -5,7 +5,6 @@ import DrawerList from './DrawerList'
 const NavigationDrawer = ({handleHideModal,handleShowModal,show}) => {
   const handleModal = (value)=>{
     handleShowModal(value)
-    console.log('valu>>',value)
     handleHideModal('drawer');
   }
 
