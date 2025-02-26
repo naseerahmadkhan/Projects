@@ -24,6 +24,7 @@ import Typography from "@mui/material/Typography"
 
 import CategoryList from "../components/CategoryList"
 import Loader from "../components/Loader/Loader"
+import { setState } from "../features/state/stateSlice"
 function Home({ logout }) {
   const modals = {
     categories: false,
@@ -33,20 +34,21 @@ function Home({ logout }) {
   }
 
   const [showModal, setShowModal] = React.useState(modals)
-  const [catId, setCatId] = React.useState(null)
   const [selectedTodo, setSelectedTodo] = React.useState({})
   const dispatch = useDispatch()
   const todos = useSelector((state) => state.todo.todos)
-  const catList = useSelector((state) => state.categories.categories) || []
-  const [isEditable, setIsEditable] = React.useState({
-    category: { selectedCatId: null },
-  })
+  
   const [loading, setIsLoading] = React.useState(false)
+  const statesCollection = useSelector((state) => state.states)
 
-  const handleEditCategory = async (cid) => {
-    setIsEditable((prev) => ({ category: { selectedCatId: cid } }))
-    handleModal("categories")
+  const states = {
+    showDrawer: statesCollection.drawer.show,
+    showCategory: statesCollection.category.show,
+    selectedCategoryId:statesCollection.selectedCategory.selectedCategoryId
   }
+
+
+
 
   const handleDeleteCategory = async (catId) => {
     if(confirm('Are you sure you want to delete todo') === true){
@@ -91,14 +93,7 @@ function Home({ logout }) {
     setShowModal((prev) => ({ ...prev, [target]: !prev[target] }))
   }
 
-  const handleHideModal = (target) => {
-    setIsEditable((prev) => ({ category: { selectedCatId: null } }))
-    setShowModal((prev) => ({ ...prev, [target]: false }))
-  }
-
-  const handleShowModal = (target) => {
-    setShowModal((prev) => ({ ...prev, [target]: true }))
-  }
+  
 
   const fetchDatafromDbAndSaveInReduxStore = async (field, action) => {
     try {
@@ -120,15 +115,11 @@ function Home({ logout }) {
     <Box>
       <Loader open={loading} />
       <AppBar
-        handleShowModal={(value) => handleShowModal(value)}
-        handleHideModal={(value) => handleHideModal(value)}
-        logout={logout}
+       
       />
 
       <NavigationDrawer
-        show={showModal.drawer}
-        handleHideModal={(value) => handleHideModal(value)}
-        handleShowModal={(value) => handleShowModal(value)}
+       
       />
       <AddTodoModal
         show={showModal.addTodo}
@@ -141,36 +132,31 @@ function Home({ logout }) {
         handleShowModal={() => handleModal("todoPreview")}
       />
       <CategoryModal
-        show={showModal.categories}
-        handleHideModal={() => handleHideModal("categories")}
-        catId={catId}
-        state={isEditable}
-        setState={setIsEditable}
+        
       />
 
       <Box sx={{ marginTop: "5%", display: "flex", flexDirection: "column" }}>
         <Stack sx={{ alignItems: "center" }} spacing={3}>
           <Button
             variant="contained"
-            disabled={catId ? false : true}
-            onClick={() => setCatId(null)}
+            disabled={states.selectedCategoryId  ? false : true}
+            onClick={() => dispatch(setState({selectedCategory:{selectedCategoryId:null}}))}
           >
             Back
           </Button>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            {!catId ? "Categories" : "Todos"}
+            {!states.selectedCategoryId ? "Categories" : "Todos"}
           </Typography>
-          {!catId && (
+          {!states.selectedCategoryId && (
             <CategoryList
               {...{
-                catList,
-                setCatId,
+               
                 handleDeleteCategory,
-                handleEditCategory,
+                
               }}
             />
           )}
-          <TodoList catId={catId} setTodoForPreview={handleTodoPreview} />
+          <TodoList catId={states.selectedCategoryId} setTodoForPreview={handleTodoPreview} />
         </Stack>
       </Box>
     </Box>

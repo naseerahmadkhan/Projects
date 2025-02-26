@@ -3,21 +3,23 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 
-const categorySlice = createSlice({
+const stateSlice = createSlice({
   name: 'states',
   initialState: {
-    todo:{loading:false,show:false,selectedTodoId:null},
-    category:{loading:false,show:false,selectedCategoryId:null},
     drawer:{show:false},
+    addToDo:{loading:false,show:false,selectedTodoId:null},
+    category:{loading:false,show:false,error:""},
+    selectedCategory:{selectedCategoryId:null},
+    editCategory:{selectedCategoryId:null,selectedCategoryName:""},
   },
   reducers: {
     setState: (state, action) => {
-      
+        Object.assign(state, action.payload);// ✅ Merges only provided properties
     },
    
   },
 
 });
 
-export const {  } = categorySlice.actions;
-export default categorySlice.reducer;
+export const { setState } = stateSlice.actions;
+export default stateSlice.reducer;

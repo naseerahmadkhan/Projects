@@ -7,8 +7,11 @@ import IconButton from "@mui/material/IconButton"
 import MenuIcon from "@mui/icons-material/Menu"
 import { handleLogout } from "../../features/user/userSlice"
 import { useDispatch, useSelector } from "react-redux";
-const TopAppBar = ({ handleShowModal}) => {
-  const dispatch = useDispatch();
+import { setState } from "../../features/state/stateSlice"
+const TopAppBar = () => {
+  const dispatch = useDispatch()
+
+  
 
 
   const logout = () => {
@@ -24,7 +27,7 @@ const TopAppBar = ({ handleShowModal}) => {
           color="inherit"
           aria-label="menu"
           sx={{ mr: 2 }}
-          onClick={() => handleShowModal("drawer")}
+          onClick={() => dispatch(setState({drawer:{show:true}}))}
         >
           <MenuIcon />
         </IconButton>

@@ -19,6 +19,8 @@ import {
 import { getAllDataFromField } from "../../../firebase/fieldOperations/fieldOperations"
 import logger from "../../../utils/logger"
 import Loader from "../../Loader/Loader"
+import { setState } from "../../../features/state/stateSlice"
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -31,39 +33,39 @@ const style = {
   p: 4,
 }
 
-export default function CategoryModal({
-  show,
-  handleShowModal,
-  handleHideModal,
-  state,
-  setState,
-}) {
-  const catRef = React.useRef(null)
-  const [loading, setLoading] = React.useState(false)
-  const [error, setError] = React.useState("")
+export default function CategoryModal() {
+  let selectedCategory = 0;
   const dispatch = useDispatch() // Call useDispatch hook outside of the function
   const categories = useSelector((state) => state.categories.categories)
-  let currentCategoryName = null
-  let catID
-  let selectedCategory
-  if (state.category.selectedCatId) {
-    catID = state.category.selectedCatId
-    selectedCategory = categories.filter((cat) => cat.cid == catID)
-    currentCategoryName = selectedCategory[0].cname
+  const categoryStates = useSelector((state) => state.states)
+  const state  = {
+    loading : categoryStates.category.loading,
+    show: categoryStates.category.show,
+    error:categoryStates.category.error,
+    selectedCategoryId: categoryStates.editCategory.selectedCategoryId,
+    selectedCategoryName:categoryStates.editCategory.selectedCategoryName
   }
 
+ 
+
+  const catRef = React.useRef(null)
+  
+  
+  
+
   const checkMinLength = (categoryName, minLength) => {
-    // Validate the category name
     if (categoryName.length < minLength) {
-      setError(`Category name must be at least ${minLength} characters long.`)
-      return
+      dispatch(setState({ category: { error: `Category name must be at least ${minLength} characters long.`,show:true } }));
+      return false;  // 🚨 Stop further execution
     }
-  }
+    return true; // ✅ Validation passed
+  };
+  
 
   const checkMaxLength = (categoryName, maxLength) => {
     // Validate the category name
     if (categoryName.length > minLength) {
-      setError(`Category name must be at most ${maxLength} characters long.`)
+      dispatch(setState({category:{error:`Category name must be at most ${maxLength} characters long.`}}))
       return
     }
   }
@@ -81,15 +83,20 @@ export default function CategoryModal({
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    if (currentCategoryName) {
-      await handleUpdate()
+    e.preventDefault();
+    
+    
+    dispatch(setState({ category: { loading: true, show: true } }));
+  
+    if (state.selectedCategoryName) {
+      await handleUpdate();
     } else {
-      await handleCreate()
+      await handleCreate();
     }
-    setLoading(false)
-  }
+  };
+  
+
+  
 
   const fetchDatafromDbAndSaveInReduxStore = async (field, action) => {
     try {
@@ -101,20 +108,24 @@ export default function CategoryModal({
   }
 
   const handleUpdate = async () => {
-    setError("") // Reset previous error state
     let updatedCategoryName = catRef.current.value
-    console.log("update>>>>", catID, selectedCategory, updatedCategoryName)
+    
+    if (!checkMinLength(updatedCategoryName, 2)) {
+      return; // 🚨 Stop execution if validation fails
+    }
 
-    checkMinLength(updatedCategoryName, 2)
     try {
-      await updateObjectInArrayInField("categories", "cid", catID, {
+      await updateObjectInArrayInField("categories", "cid", state.selectedCategoryId, {
         cname: updatedCategoryName,
         date: Date.now(),
       })
       await fetchDatafromDbAndSaveInReduxStore("categories", addCategory)
-      catRef.current.value = "" // Clear the input field
-      handleHideModal()
+     
       alert("data updated successfully!")
+      dispatch(setState({ 
+        category: { loading: false },
+        editCategory:{selectedCategoryId:null,selectedCategoryName:""}, 
+      }));
     } catch (e) {
       alert(e)
     }
@@ -122,46 +133,50 @@ export default function CategoryModal({
 
   // Handle form submission
   const handleCreate = async () => {
-    setError("") // Reset previous error state
+   
     let categoryName = catRef.current.value
-    checkMinLength(categoryName, 2)
-    // checkMaxLength(categoryName,maxLength=5)
-    // sendDataToReduxStoreAndThenSaveInDB(categoryName)
+    if (!checkMinLength(categoryName, 2)) {
+      return; // 🚨 Stop execution if validation fails
+    }
+   
     await sendDataToDbAndThenUpdateReduxStore(categoryName)
     catRef.current.value = "" // Clear the input field
-    handleHideModal()
     alert("data added successfully!")
+    dispatch(setState({ category: { loading: false } }));
   }
 
   return (
     <div>
+    <Loader open={state.loading} />
       <Modal
-        open={show}
-        onClose={handleShowModal}
+        open={state.show}
+        onClose={()=>dispatch(setState({category:{show:false}}))}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
+         
         <Box sx={style} component="form" onSubmit={handleSubmit}>
+        
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
-              {currentCategoryName ? "Update Category" : "Create Category"}
+              {state.selectedCategoryName ? "Update Category" : "Create Category"}
             </Typography>
 
-            <IconButton aria-label="close" onClick={handleHideModal}>
+            <IconButton aria-label="close" onClick={()=>dispatch(setState({category:{show:false}}))}>
               <CloseIcon />
             </IconButton>
           </Box>
-          <Loader open={loading} />
+          
           <Stack sx={{ display: "flex" }} spacing={3}>
             <TextField
               inputRef={catRef}
               required
-              defaultValue={currentCategoryName}
+              defaultValue={state.selectedCategoryName}
               id="category-name"
               label="Category Name"
               variant="filled"
-              helperText={error || "Please enter a valid category name."}
-              error={!!error}
+              helperText={state.error || "Please enter a valid category name."}
+              error={!!state.error}
               slotProps={{
                 minLength: 2,
               }}
@@ -173,7 +188,7 @@ export default function CategoryModal({
               sx={{ height: 50 }}
               variant="contained"
             >
-              {currentCategoryName ? "Update" : "Create"}
+              {state.selectedCategoryName ? "Update" : "Create"}
             </Button>
           </Stack>
         </Box>

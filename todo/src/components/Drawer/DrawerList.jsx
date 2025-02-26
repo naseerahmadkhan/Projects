@@ -8,16 +8,19 @@ import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
-const DrawerList = ({handleDrawer}) => {
+import { useSelector, useDispatch } from "react-redux"
+import { setState } from '../../features/state/stateSlice'
+const DrawerList = () => {
+  const dispatch = useDispatch()
   return (
     <Box
           sx={{ width: 250 }}
           role="presentation"
-          onClick={() => handleDrawer("drawer")}
+          
         >
           <List>
           <ListItem key={'1'} disablePadding>
-                <ListItemButton  onClick={() => {handleDrawer("categories")}}>
+                <ListItemButton  onClick={()=>dispatch(setState({category:{show:true}}))}>
                   <ListItemIcon>
                     <CreateNewFolderIcon/>
                   </ListItemIcon>
@@ -28,7 +31,7 @@ const DrawerList = ({handleDrawer}) => {
           <Divider />
           <List>
           <ListItem key={'2'} disablePadding>
-                <ListItemButton onClick={() => handleDrawer("addTodo")}>
+                <ListItemButton onClick={()=>dispatch(setState({addToDo:{show:true}}))}>
                   <ListItemIcon>
                     <NoteAddIcon/>
                   </ListItemIcon>

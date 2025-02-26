@@ -15,11 +15,23 @@ import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import FolderIcon from '@mui/icons-material/Folder';
 import ListItemButton from '@mui/material/ListItemButton';
+import { useDispatch, useSelector } from "react-redux" 
+import { setState } from '../../features/state/stateSlice';
+const CategoryList = ({handleDeleteCategory}) => {
+  const dispatch = useDispatch() 
 
-const CategoryList = ({catList,setCatId,handleDeleteCategory,handleEditCategory}) => {
+  const list = useSelector((state) => state.categories.categories) || []
  
 
+  const handleEdit = (cid)=>{
+    console.log("edit",cid)
+    const selectedCategory = list.filter((item)=>item.cid === cid)
+    dispatch(setState({
+      editCategory:{selectedCategoryId:cid,selectedCategoryName:selectedCategory[0].cname},
+      category:{show:true}
+    }))
 
+  }
  
   return (
     <Box sx={{width:"80%"}}>
@@ -28,13 +40,13 @@ const CategoryList = ({catList,setCatId,handleDeleteCategory,handleEditCategory}
           
           <List>
             {
-              catList.map((category,index)=>{
+              list.map((category,index)=>{
                 return(
                   <ListItem
                   key={index}
                 secondaryAction={
                   <Stack direction={"row"} spacing={3}>
-                    <IconButton edge="end" aria-label="edit" onClick={()=>handleEditCategory(category.cid)}>
+                    <IconButton edge="end" aria-label="edit" onClick={()=>handleEdit(category.cid)}>
                     <EditIcon />
                   </IconButton>
 
@@ -46,7 +58,7 @@ const CategoryList = ({catList,setCatId,handleDeleteCategory,handleEditCategory}
                   
                 }
               >
-                <ListItemButton onClick={() => setCatId(category.cid)}>
+                <ListItemButton onClick={() => dispatch(setState({selectedCategory:{selectedCategoryId:category.cid}}))}>
                 <ListItemAvatar>
                   <Avatar>
                     <FolderIcon />
