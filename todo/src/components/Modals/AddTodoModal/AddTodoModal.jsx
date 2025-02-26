@@ -14,6 +14,7 @@ import { getAllDataFromField } from "../../../firebase/fieldOperations/fieldOper
 import { addTodo } from "../../../features/todos/todoSlice"
 import { addObjectInArrayInField } from "../../../firebase/fieldOperations/arrayInFieldOperations"
 import Loader from "../../Loader/Loader"
+import { setState } from "../../../features/state/stateSlice"
 const style = {
   position: "absolute",
   top: "50%",
@@ -29,11 +30,20 @@ export default function AddTodoModal({ show, handleShowModal }) {
   const textEditorRef = React.useRef()
   const dispatch = useDispatch() // Call useDispatch hook outside of the function
   const todos = useSelector((state) => state.todo.todos)
+  
+  const todoStates = useSelector((state) => state.states.addToDo)
+  const state ={
+    loading: todoStates.loading,
+    show: todoStates.show,
+
+
+  }
+
+
 
   const todoRef = React.useRef()
   const [catId, setCatId] = React.useState()
   const [html, setHtml] = React.useState("")
-  const [loading, setLoading] = React.useState(false)
 
   const sendDataToDbAndThenUpdateReduxStore = async (fieldName, payload) => {
     try {
@@ -53,8 +63,18 @@ export default function AddTodoModal({ show, handleShowModal }) {
     }
   }
 
+  const hideModal = ()=>{
+    dispatch(setState({
+      addToDo:{show: false,},
+      drawer:{show:false},
+
+    }))
+  }
+
   const handleSubmit = async () => {
-    setLoading(true)
+    dispatch(setState({
+      addToDo:{loading:true,show:true}
+    }))
     let htmlContent = textEditorRef.current.getHTMLContent()
     setHtml(htmlContent)
 
@@ -76,9 +96,12 @@ export default function AddTodoModal({ show, handleShowModal }) {
     try {
       await sendDataToDb("contents", contentPayload)
       await sendDataToDbAndThenUpdateReduxStore("todos", todoPayload)
-      setLoading(false)
+      
       alert('sucessfully added!');
-      handleShowModal() // Close modal only after API call is done
+      dispatch(setState({
+        addToDo:{loading:false,show:false}
+      }))
+      hideModal()// Close modal only after API call is done
       textEditorRef.current.clearText()
     } catch (error) {
       console.error("Error saving todo:", error)
@@ -89,9 +112,10 @@ export default function AddTodoModal({ show, handleShowModal }) {
 
   return (
     <div>
+      <Loader open={state.loading} /> 
       <Modal
-        open={show}
-        onClose={handleShowModal}
+        open={state.show}
+        onClose={hideModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -101,11 +125,11 @@ export default function AddTodoModal({ show, handleShowModal }) {
               Add Todo
             </Typography>
 
-            <IconButton aria-label="close" onClick={handleShowModal}>
+            <IconButton aria-label="close" onClick={hideModal}>
               <CloseIcon />
             </IconButton>
           </Box>
-          <Loader open={loading} /> 
+          
           <Stack sx={{ display: "flex" }} spacing={3}>
             <Categories categorySelected={(id) => setCatId(id)} />
             <TextField

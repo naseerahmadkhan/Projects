@@ -122,8 +122,7 @@ function Home({ logout }) {
        
       />
       <AddTodoModal
-        show={showModal.addTodo}
-        handleShowModal={() => handleModal("addTodo")}
+     
       />
 
       <TodoPreviewModal

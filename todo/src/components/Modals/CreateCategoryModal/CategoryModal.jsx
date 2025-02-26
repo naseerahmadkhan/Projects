@@ -34,7 +34,6 @@ const style = {
 }
 
 export default function CategoryModal() {
-  let selectedCategory = 0;
   const dispatch = useDispatch() // Call useDispatch hook outside of the function
   const categories = useSelector((state) => state.categories.categories)
   const categoryStates = useSelector((state) => state.states)
