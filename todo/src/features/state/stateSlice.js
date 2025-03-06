@@ -8,6 +8,7 @@ const stateSlice = createSlice({
   initialState: {
     drawer:{show:false},
     addToDo:{loading:false,show:false,selectedTodoId:null},
+    editToDo:{loading:false,show:false,selectedTodoId:null},
     category:{loading:false,show:false,error:""},
     selectedCategory:{selectedCategoryId:null},
     editCategory:{selectedCategoryId:null,selectedCategoryName:""},

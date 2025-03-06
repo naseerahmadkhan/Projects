@@ -24,6 +24,7 @@ import Typography from "@mui/material/Typography"
 
 import CategoryList from "../components/CategoryList"
 import Loader from "../components/Loader/Loader"
+import TodoEditModal from "../components/Modals/TodoEditModal"
 import { setState } from "../features/state/stateSlice"
 function Home({ logout }) {
   const modals = {
@@ -124,6 +125,7 @@ function Home({ logout }) {
       <AddTodoModal
      
       />
+      <TodoEditModal/>
 
       <TodoPreviewModal
         show={showModal.todoPreview}

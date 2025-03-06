@@ -20,9 +20,16 @@ import { useSelector,useDispatch } from 'react-redux';
 import { addTodo } from '../../features/todos/todoSlice';
 import { deleteObjectInArrayInField } from '../../firebase/fieldOperations/arrayInFieldOperations';
 import { getAllDataFromField } from '../../firebase/fieldOperations/fieldOperations';
+import { setState } from '../../features/state/stateSlice';
 export default function TodoList({catId,setTodoForPreview}) {
   const todos = useSelector((state) => state.todo.todos);
   const dispatch = useDispatch(); // Call useDispatch hook outside of the function
+
+  const handleTodoEdit = async(tid)=>{
+    console.log('tid',tid)
+    const editTodo = {editToDo:{loading:false,show:true,selectedTodoId:tid}}
+    dispatch(setState(editTodo))
+  }
 
   const handleDeleteTodo = async(tid)=>{
     console.log("delete todo")
@@ -53,7 +60,7 @@ export default function TodoList({catId,setTodoForPreview}) {
         key={index}
       secondaryAction={
         <Stack direction={"row"} spacing={3}>
-          <IconButton edge="end" aria-label="edit" onClick={()=>console.log(item.tid)}>
+          <IconButton edge="end" aria-label="edit" onClick={()=>handleTodoEdit(item.tid)}>
           <EditIcon />
         </IconButton>
 
