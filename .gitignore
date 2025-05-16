@@ -1,24 +1,38 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# Ignore node_modules folders in any directory
+**/node_modules/
 
-node_modules
-dist
-dist-ssr
-*.local
+# Ignore logs in any directory
+**/*.log
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Ignore OS files in any directory
+**/.DS_Store
+**/Thumbs.db
+
+# Ignore environment files in any directory
+**/.env
+**/.env.local
+**/.env.*.local
+
+# Ignore package-lock and yarn lock files in any directory
+**/package-lock.json
+**/yarn.lock
+
+# Ignore build output in any directory
+**/dist
+**/build
+
+# Ignore coverage directories in any directory
+**/coverage
+
+# Ignore temporary files in any directory
+**/*.swp
+**/*.swo
+**/*.bak
+
+# Ignore IDE settings in any directory
+**/.vscode/
+**/.idea/
+
+# Ignore npm-debug files in any directory
+**/npm-debug.log*
+

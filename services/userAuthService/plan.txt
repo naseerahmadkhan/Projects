@@ -1,0 +1,141 @@
+auth-service/
+├── src/                             # Main application source
+│   ├── config/                      # App configuration (env, DB, secrets)
+│   │   ├── db.js
+│   │   └── index.js
+|   ├── access-control/                 # Access control layer
+│   ├── roles.js                    # Role definitions and permissions
+│   ├── checkPermission.js          # Middleware to check access rights
+│   └── constants.js  	
+│   │
+│   ├── controllers/                # Route handlers
+│   │   ├── auth.controller.js
+│   │   └── user.controller.js
+│   │
+│   ├── routes/                     # API endpoints
+│   │   ├── auth.routes.js
+│   │   └── user.routes.js
+│   │
+│   ├── services/                   # Business logic
+│   │   ├── auth.service.js
+│   │   └── user.service.js
+│   │
+│   ├── models/                     # Database models/schemas
+│   │   └── user.model.js
+│   │
+│   ├── middleware/                 # Express middleware (JWT, errors)
+│   │   ├── auth.middleware.js
+│   │   ├── error.middleware.js
+│   │   └── rateLimit.middleware.js
+│   │
+│   ├── validators/                 # Request body validation
+│   │   └── auth.validator.js
+│   │
+│   ├── utils/                      # Utility functions (token, logger)
+│   │   ├── jwt.util.js
+│   │   └── logger.js
+│   │
+│   ├── events/                     # Event emitters/listeners
+│   │   └── user.events.js
+│   │
+│   ├── jobs/                       # Background tasks (email queue, etc.)
+│   │   └── email.job.js
+│   │
+│   ├── database/                   # DB init/migrations
+│   │   ├── init.js
+│   │   └── migrate.js
+│   │
+│   ├── app.js                      # App configuration
+│   └── server.js                   # Main server entry point
+│
+├── tests/                          # All tests (unit, integration, e2e)
+│   ├── unit/
+│   │   ├── controllers/
+│   │   │   └── auth.controller.test.js
+│   │   ├── services/
+│   │   │   └── auth.service.test.js
+│   │   ├── middleware/
+│   │   │   └── auth.middleware.test.js
+│   │   └── utils/
+│   │       └── jwt.util.test.js
+│   │
+│   ├── integration/
+│   │   ├── auth.integration.test.js
+│   │   └── user.integration.test.js
+│   │
+│   ├── e2e/
+│   │   └── register-login.e2e.test.js
+│   │
+│   ├── mocks/
+│   │   ├── user.mock.js
+│   │   └── mailer.mock.js
+│   │
+│   ├── fixtures/
+│   │   └── users.js
+│   │
+│   ├── setup/
+│   │   ├── db.js
+│   │   └── jest.setup.js
+│   │
+│   ├── testUtils.js                # Global test helpers
+│   └── .env.test                   # Test-specific env variables
+│
+├── docker/                         # Docker-related files
+│   └── nginx.conf                  # Optional NGINX config for reverse proxy
+│
+├── .env                            # Environment config (local/dev)
+├── .gitignore
+├── Dockerfile                      # Container setup
+├── docker-compose.yml              # Multi-service local dev stack
+├── jest.config.js                  # Jest config for tests
+├── package.json
+├── README.md
+└── tsconfig.json (if using TypeScript)
+
+
+
+access-control/roles.js Example
+const roles = {
+  admin: {
+    can: ['read:users', 'delete:users', 'update:roles'],
+  },
+  user: {
+    can: ['read:profile', 'update:profile'],
+  },
+};
+
+module.exports = roles;
+
+
+
+
+ checkPermission.js Middleware Example
+const roles = require('./roles');
+
+function checkPermission(action) {
+  return (req, res, next) => {
+    const userRole = req.user.role;
+    if (roles[userRole]?.can.includes(action)) {
+      return next();
+    }
+    return res.status(403).json({ error: 'Forbidden: insufficient permissions' });
+  };
+}
+
+module.exports = checkPermission;
+
+
+
+ Example Usage in Route
+const checkPermission = require('../access-control/checkPermission');
+
+router.get(
+  '/admin/users',
+  authMiddleware.verifyToken,
+  checkPermission('read:users'),
+  userController.getAllUsers
+);
+
+
+
+
