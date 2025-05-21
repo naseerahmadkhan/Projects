@@ -1,0 +1,13 @@
+POST
+http://localhost:5000/api/v1/auth/register
+
+Headers:
+Content-Type:application/json
+
+{
+  "firstName": "Alice",
+  "lastName": "Johnson",
+  "email": "alice@example.com",
+  "password": "strongPassword123",
+  "passwordConfirmation": "strongPassword123"
+}

@@ -21,6 +21,30 @@ const validateRegistration = [
   body('lastName')
     .notEmpty()
     .withMessage('Last name is required'),
+
+  body('isActive')
+    .optional()
+    .isBoolean()
+    .withMessage('isActive must be a boolean'),
+
+  body('isBlocked')
+    .optional()
+    .isBoolean()
+    .withMessage('isBlocked must be a boolean'),
+
+  body('lastLogin')
+    .optional()
+    .isArray()
+    .withMessage('lastLogin must be an array of dates')
+    .custom((arr) => arr.every(date => !isNaN(Date.parse(date))))
+    .withMessage('Each entry in lastLogin must be a valid date'),
+
+  body('changedPasswords')
+    .optional()
+    .isArray()
+    .withMessage('changedPasswords must be an array of strings')
+    .custom((arr) => arr.every(pw => typeof pw === 'string'))
+    .withMessage('Each entry in changedPasswords must be a string'),
 ];
 
 // Validation for user login

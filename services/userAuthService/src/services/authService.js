@@ -3,21 +3,25 @@ const jwtService = require('./jwtService'); // Import jwtService for creating an
 const { hashPassword, comparePassword } = require('../utils/authUtils'); // Import the utility functions
 
 // Service to register a new user
-const registerUser = async (email, password, firstName, lastName) => {
+const registerUser = async ({ email, password, firstName, lastName, isActive = false, isBlocked = false }) => {
   const userExists = await User.findOne({ email });
   if (userExists) {
     throw new Error('User with this email already exists');
   }
 
-  // Hash the password using the utility function
+  // Hash the password
   const hashedPassword = await hashPassword(password);
 
-  // Create and save the new user
+  // Create the user with default/optional fields
   const user = new User({
     email,
     password: hashedPassword,
     firstName,
     lastName,
+    isActive,
+    isBlocked,
+    lastLogin: [], // initialize login history
+    changedPasswords: [hashedPassword], // store the first hashed password
   });
 
   await user.save();

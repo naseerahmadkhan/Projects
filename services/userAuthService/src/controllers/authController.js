@@ -5,17 +5,32 @@ const jwtService = require('../services/jwtService'); // Import jwtService for J
 // @route   POST /api/v1/auth/register
 exports.registerUser = async (req, res) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      isActive = false,
+      isBlocked = false,
+    } = req.body;
 
-    // Register user using authService
-    const user = await authService.registerUser(email, password, firstName, lastName);
+    // Call authService to register user with default and optional fields
+    const user = await authService.registerUser({
+      email,
+      password,
+      firstName,
+      lastName,
+      isActive,
+      isBlocked,
+    });
 
     // Generate token using jwtService
     const token = jwtService.createToken({ id: user._id, email: user.email });
 
-    // Remove password before sending response
+    // Remove password and sensitive fields before sending response
     const userResponse = user.toObject();
     delete userResponse.password;
+    delete userResponse.changedPasswords;
 
     // Optionally set token in a cookie
     res.cookie('token', token, {
@@ -30,6 +45,7 @@ exports.registerUser = async (req, res) => {
       user: userResponse,
       token,
     });
+
   } catch (err) {
     console.error('Register Error:', err.message);
     res.status(400).json({ message: err.message });
