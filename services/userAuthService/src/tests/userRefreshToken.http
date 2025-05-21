@@ -1,0 +1,8 @@
+POST
+http://localhost:5000/api/v1/auth/get-refresh-token
+Headers:
+Content-Type:application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MmRkMzFlNGM5OWY4NWQxZjdmZTI4MyIsImlhdCI6MTc0NzgzNjE5OSwiZXhwIjoxNzQ4NDQwOTk5fQ.reQt872QStxFy4aiyDOHAQOurGQb753H7gJ36NOgfcs"
+}

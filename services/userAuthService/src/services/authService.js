@@ -1,6 +1,7 @@
+// authService.js
 const User = require('../models/User');
-const jwtService = require('./jwtService'); // Import jwtService for creating and verifying tokens
-const { hashPassword, comparePassword } = require('../utils/authUtils'); // Import the utility functions
+const jwtService = require('./jwtService'); // Import updated jwtService
+const { hashPassword, comparePassword } = require('../utils/authUtils'); // Import utility functions
 
 // Service to register a new user
 const registerUser = async ({ email, password, firstName, lastName, isActive = false, isBlocked = false }) => {
@@ -28,23 +29,47 @@ const registerUser = async ({ email, password, firstName, lastName, isActive = f
   return user;
 };
 
-// Service to log a user in
+// Service to login the user
 const loginUser = async (email, password) => {
   const user = await User.findOne({ email });
   if (!user) {
-    throw new Error('Invalid email or password');
+    throw new Error('Invalid credentials');
   }
 
-  // Compare the entered password with the stored hash using the utility function
-  const isMatch = await comparePassword(password, user.password);
-  if (!isMatch) {
-    throw new Error('Invalid email or password');
+  const isPasswordValid = await comparePassword(password, user.password);
+  if (!isPasswordValid) {
+    throw new Error('Invalid credentials');
   }
 
-  // Use jwtService to create the token
-  const token = jwtService.createToken(user);
+  // Generate access token and refresh token using jwtService
+  const accessToken = jwtService.createAccessToken(user);
+  const refreshToken = jwtService.createRefreshToken(user);
 
-  return { token, user };
+  // Store the refresh token in the database
+  user.refreshToken = refreshToken;
+  await user.save();
+
+  return { user, accessToken, refreshToken };
+};
+
+// Service to refresh the access token using refresh token
+const refreshAccessToken = async (refreshToken) => {
+  try {
+    const decoded = jwtService.verifyRefreshToken(refreshToken);
+    if (!decoded) {
+      throw new Error('Invalid refresh token');
+    }
+
+    const user = await User.findById(decoded.id);
+    if (!user || user.refreshToken !== refreshToken) {
+      throw new Error('Invalid refresh token');
+    }
+
+    const accessToken = jwtService.createAccessToken(user);
+    return { accessToken };
+  } catch (err) {
+    throw new Error('Invalid refresh token');
+  }
 };
 
 // Service to get the user by ID
@@ -60,4 +85,5 @@ module.exports = {
   registerUser,
   loginUser,
   getUserById,
+  refreshAccessToken,
 };

@@ -47,6 +47,9 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  refreshToken: {
+    type: String, // Store the refresh token
+  },
 });
 
 const User = mongoose.model('User', UserSchema);

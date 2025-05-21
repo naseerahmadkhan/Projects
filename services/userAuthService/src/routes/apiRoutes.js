@@ -9,7 +9,8 @@ const signupMiddleware = require('../middleware/userRegistrationMiddleware');
 // Define the array of middlewares you want to use for /users routes
 // const userMiddlewares = [authMiddleware, csrfProtection];
 
-router.use('/auth',signupMiddleware,authRoutes);
+// router.use('/auth',signupMiddleware,authRoutes);
+router.use('/auth',authRoutes);
 
 
 module.exports = router;
