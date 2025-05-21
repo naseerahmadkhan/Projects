@@ -5,10 +5,10 @@ const jwtService = require('../services/jwtService'); // Import jwtService for J
 // @route   POST /api/v1/auth/register
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { firstName, lastName, email, password } = req.body;
 
     // Register user using authService
-    const user = await authService.registerUser(email, password, name);
+    const user = await authService.registerUser(email, password, firstName, lastName);
 
     // Generate token using jwtService
     const token = jwtService.createToken({ id: user._id, email: user.email });

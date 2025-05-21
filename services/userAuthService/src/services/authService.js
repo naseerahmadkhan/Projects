@@ -1,9 +1,9 @@
 const User = require('../models/User');
 const jwtService = require('./jwtService'); // Import jwtService for creating and verifying tokens
-const { hashPassword, comparePassword } = require('../auth/authUtils'); // Import the utility functions
+const { hashPassword, comparePassword } = require('../utils/authUtils'); // Import the utility functions
 
 // Service to register a new user
-const registerUser = async (email, password, name) => {
+const registerUser = async (email, password, firstName, lastName) => {
   const userExists = await User.findOne({ email });
   if (userExists) {
     throw new Error('User with this email already exists');
@@ -16,7 +16,8 @@ const registerUser = async (email, password, name) => {
   const user = new User({
     email,
     password: hashedPassword,
-    name,
+    firstName,
+    lastName,
   });
 
   await user.save();
