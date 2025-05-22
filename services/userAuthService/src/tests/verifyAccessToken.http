@@ -1,0 +1,7 @@
+POST
+http://localhost:5000/api/v1/verify/verify-access-token
+
+Body
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MmRkMzFlNGM5OWY4NWQxZjdmZTI4MyIsImlhdCI6MTc0NzkxODg1NiwiZXhwIjoxNzQ4NTIzNjU2fQ.cd4b6bBrHqCD3w6nYNiTVHUEsQf3Dsja5Jo8Uq2DQPE"
+}

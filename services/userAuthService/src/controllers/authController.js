@@ -115,8 +115,8 @@ exports.getUserProfile = async (req, res) => {
 }
 
 // @desc    Verify JWT Token
-// @route   POST /api/v1/auth/verify-token
-exports.verifyJwtToken = (req, res) => {
+// @route   POST /api/v1/auth/verify-access-token
+exports.verifyJwtAccessToken = (req, res) => {
   try {
     const { token } = req.body
 
@@ -125,7 +125,27 @@ exports.verifyJwtToken = (req, res) => {
     }
 
     // Use jwtService to verify the token
-    const decoded = jwtService.verifyToken(token)
+    const decoded = jwtService.verifyAccessToken(token)
+    res.status(200).json({ message: "Token is valid", user: decoded })
+  } catch (err) {
+    console.error("Token Verification Error:", err.message)
+    res.status(401).json({ message: "Invalid or expired token" })
+  }
+}
+
+
+// @desc    Verify JWT Token
+// @route   POST /api/v1/auth/verify-refresh-token
+exports.verifyJwtRefreshToken = (req, res) => {
+  try {
+    const { token } = req.body
+
+    if (!token) {
+      return res.status(400).json({ message: "Token is required" })
+    }
+
+    // Use jwtService to verify the token
+    const decoded = jwtService.verifyRefreshToken(token)
     res.status(200).json({ message: "Token is valid", user: decoded })
   } catch (err) {
     console.error("Token Verification Error:", err.message)
