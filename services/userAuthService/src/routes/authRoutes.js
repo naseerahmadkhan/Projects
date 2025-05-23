@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { registerUser, loginUser } = require('../controllers/authController');
-const userRegistrationMiddleware = require('../middleware/userRegistrationMiddleware');
-const loginMiddleware = require('../middleware/loginMiddleware');
+const { userRegistrationMiddleware, loginMiddleware } = require('../middleware');
 
 
 // Register route with validation
