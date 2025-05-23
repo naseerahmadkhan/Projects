@@ -1,10 +1,8 @@
 const { validateRegistration, checkValidation } = require('../validators/userValidator');
-const { registerUser } = require('../controllers/authController');
 
-const signupMiddleware = [
+const userRegistrationMiddleware = [
   validateRegistration,
   checkValidation,
-  registerUser
 ];
 
-module.exports = signupMiddleware;
+module.exports = userRegistrationMiddleware;
