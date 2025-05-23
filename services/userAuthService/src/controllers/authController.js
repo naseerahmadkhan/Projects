@@ -25,7 +25,7 @@ exports.registerUser = async (req, res) => {
     })
 
     // Generate token using jwtService
-    const token = jwtService.createToken({ id: user._id, email: user.email })
+    const token = jwtService.createAccessToken({ id: user._id, email: user.email })
 
     // Remove password and sensitive fields before sending response
     const userResponse = user.toObject()
