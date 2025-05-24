@@ -4,6 +4,7 @@ const router = express.Router();
 const authRoutes = require('./authRoutes');
 const jwtRoutes = require('./jwtRoutes')
 const signupMiddleware = require('../middleware/userRegistrationMiddleware');
+const {checkAuthToken} = require('../middleware');
 // const { authMiddleware } = require('../middleware/authMiddleware'); // Import the authMiddleware
 // const { csrfProtection } = require('../middleware/csrfProtection'); // Import the csrfProtection middleware
 
@@ -12,7 +13,7 @@ const signupMiddleware = require('../middleware/userRegistrationMiddleware');
 
 // router.use('/auth',signupMiddleware,authRoutes);
 router.use('/auth',authRoutes);
-router.use('/verify',jwtRoutes);
+router.use('/verify',checkAuthToken,jwtRoutes);
 
 
 module.exports = router;

@@ -118,31 +118,23 @@ exports.getUserProfile = async (req, res) => {
 // @route   POST /api/v1/auth/verify-access-token
 exports.verifyJwtAccessToken = (req, res) => {
   try {
-    const { token } = req.body
-
-    if (!token) {
-      return res.status(400).json({ message: "Token is required" })
-    }
+    const token = req.token; // Get token from middleware
 
     // Use jwtService to verify the token
-    const decoded = jwtService.verifyAccessToken(token)
-    res.status(200).json({ message: "Token is valid", user: decoded })
+    const decoded = jwtService.verifyAccessToken(token);
+    res.status(200).json({ message: "Token is valid", user: decoded });
   } catch (err) {
-    console.error("Token Verification Error:", err.message)
-    res.status(401).json({ message: "Invalid or expired token" })
+    console.error("Token Verification Error:", err.message);
+    res.status(401).json({ message: "Invalid or expired token" });
   }
-}
+};
 
 
 // @desc    Verify JWT Token
 // @route   POST /api/v1/auth/verify-refresh-token
 exports.verifyJwtRefreshToken = (req, res) => {
   try {
-    const { token } = req.body
-
-    if (!token) {
-      return res.status(400).json({ message: "Token is required" })
-    }
+    const token  = req.token
 
     // Use jwtService to verify the token
     const decoded = jwtService.verifyRefreshToken(token)
@@ -159,14 +151,11 @@ exports.verifyJwtRefreshToken = (req, res) => {
 // @route   POST /api/v1/auth/refresh
 exports.refreshAccessToken = async (req, res) => {
   try {
-    const { refreshToken } = req.body;
+    const { refreshToken } = req.token;
 
-    if (!refreshToken) {
-      return res.status(400).json({ message: 'Refresh token is required' });
-    }
 
     // Validate and refresh access token
-    const { accessToken } = await authService.refreshAccessToken(refreshToken);
+    const { accessToken } = await jwtService.refreshAccessToken(refreshToken);
 
     res.status(200).json({
       message: 'Access token refreshed successfully',

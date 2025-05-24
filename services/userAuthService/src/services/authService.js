@@ -52,25 +52,6 @@ const loginUser = async (email, password) => {
   return { user, accessToken, refreshToken };
 };
 
-// Service to refresh the access token using refresh token
-const refreshAccessToken = async (refreshToken) => {
-  try {
-    const decoded = jwtService.verifyRefreshToken(refreshToken);
-    if (!decoded) {
-      throw new Error('Invalid refresh token');
-    }
-
-    const user = await User.findById(decoded.id);
-    if (!user || user.refreshToken !== refreshToken) {
-      throw new Error('Invalid refresh token');
-    }
-
-    const accessToken = jwtService.createAccessToken(user);
-    return { accessToken };
-  } catch (err) {
-    throw new Error('Invalid refresh token');
-  }
-};
 
 // Service to get the user by ID
 const getUserById = async (id) => {
@@ -85,5 +66,4 @@ module.exports = {
   registerUser,
   loginUser,
   getUserById,
-  refreshAccessToken,
 };

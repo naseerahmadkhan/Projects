@@ -1,43 +1,43 @@
-const jwt = require('jsonwebtoken');
-const { JWT_SECRET, ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN } = process.env;
+const {generateToken,verifyToken} = require('../utils/tokenUtils')
+const User = require('../models/User');
+const {
+  ACCESS_TOKEN_SECRET,
+  REFRESH_TOKEN_SECRET,
+  ACCESS_TOKEN_EXPIRES_IN,
+  REFRESH_TOKEN_EXPIRES_IN,
+} = process.env;
 
-// Service to create an access JWT token
-const createAccessToken = (user) => {
-  const token = jwt.sign(
-    { id: user._id, email: user.email },
-    JWT_SECRET,
-    { expiresIn: ACCESS_TOKEN_EXPIRES_IN } // 15m for example
-  );
-  return token;
-};
+// Access token functions
+const createAccessToken = (user) =>
+  generateToken({ id: user._id, email: user.email }, ACCESS_TOKEN_SECRET, ACCESS_TOKEN_EXPIRES_IN);
 
-// Service to create a refresh JWT token
-const createRefreshToken = (user) => {
-  const token = jwt.sign(
-    { id: user._id },
-    JWT_SECRET,
-    { expiresIn: REFRESH_TOKEN_EXPIRES_IN } // 7d for example
-  );
-  return token;
-};
+const verifyAccessToken = (token) =>
+  verifyToken(token, ACCESS_TOKEN_SECRET, 'Invalid or expired access token');
 
-// Service to verify the access token
-const verifyAccessToken = (token) => {
+// Refresh token functions
+const createRefreshToken = (user) =>
+  generateToken({ id: user._id }, REFRESH_TOKEN_SECRET, REFRESH_TOKEN_EXPIRES_IN);
+
+const verifyRefreshToken = (token) =>
+  verifyToken(token, REFRESH_TOKEN_SECRET, 'Invalid or expired refresh token');
+
+// Service to refresh the access token using refresh token
+const refreshAccessToken = async (refreshToken) => {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    return decoded;
-  } catch (error) {
-    throw new Error('Invalid or expired access token');
-  }
-};
+    const decoded = verifyRefreshToken(refreshToken);
+    if (!decoded) {
+      throw new Error('Invalid refresh token');
+    }
 
-// Service to verify the refresh token
-const verifyRefreshToken = (token) => {
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    return decoded;
-  } catch (error) {
-    throw new Error('Invalid or expired refresh token');
+    const user = await User.findById(decoded.id);
+    if (!user || user.refreshToken !== refreshToken) {
+      throw new Error('Invalid refresh token');
+    }
+
+    const accessToken = createAccessToken(user);
+    return { accessToken };
+  } catch (err) {
+    throw new Error('Invalid refresh token');
   }
 };
 
@@ -46,4 +46,5 @@ module.exports = {
   createRefreshToken,
   verifyAccessToken,
   verifyRefreshToken,
+  refreshAccessToken
 };
