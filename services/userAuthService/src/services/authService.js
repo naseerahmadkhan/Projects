@@ -2,6 +2,7 @@
 const User = require('../models/User');
 const jwtService = require('./jwtService'); // Import updated jwtService
 const { hashPassword, comparePassword } = require('../utils/authUtils'); // Import utility functions
+const {sendSms} = require('../utils/sendSms')
 
 // Service to register a new user
 const registerUser = async ({ email, password, firstName, lastName, isActive = false, isBlocked = false }) => {
@@ -26,6 +27,7 @@ const registerUser = async ({ email, password, firstName, lastName, isActive = f
   });
 
   await user.save();
+  sendSms(user)
   return user;
 };
 
