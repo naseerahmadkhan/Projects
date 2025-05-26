@@ -151,7 +151,7 @@ exports.verifyJwtRefreshToken = (req, res) => {
 // @route   POST /api/v1/auth/refresh
 exports.refreshAccessToken = async (req, res) => {
   try {
-    const { refreshToken } = req.token;
+    const refreshToken  = req.token;
 
 
     // Validate and refresh access token
