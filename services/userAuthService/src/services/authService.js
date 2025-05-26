@@ -27,7 +27,7 @@ const registerUser = async ({ email, password, firstName, lastName, isActive = f
   });
 
   await user.save();
-  sendSms(user)
+  sendSms(user.email)
   return user;
 };
 
