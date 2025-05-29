@@ -17,4 +17,3 @@ const generateOTP = (digits = 6) => {
     console.log('otp: ',otp);
     return otp;
   };
-  

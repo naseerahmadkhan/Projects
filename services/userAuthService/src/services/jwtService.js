@@ -18,7 +18,7 @@ const createAccessToken = (user) =>
 // Refresh token with DB update
 const createRefreshToken = async (user) => {
   const refreshToken = generateToken(
-    { id: user._id, type: 'refresh' },
+    { id: user._id, email: user.email, type: 'refresh' },
     REFRESH_TOKEN_SECRET,
     REFRESH_TOKEN_EXPIRES_IN
   );

@@ -44,12 +44,10 @@ const loginUser = async (email, password) => {
   }
 
   // Generate access token and refresh token using jwtService
+  const refreshToken = await jwtService.createRefreshToken(user);
   const accessToken = jwtService.createAccessToken(user);
-  const refreshToken = jwtService.createRefreshToken(user);
 
-  // Store the refresh token in the database
-  user.refreshToken = refreshToken;
-  await user.save();
+
 
   return { user, accessToken, refreshToken };
 };
