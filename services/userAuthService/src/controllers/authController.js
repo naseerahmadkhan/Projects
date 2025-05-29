@@ -53,7 +53,6 @@ exports.registerUser = async (req, res) => {
 }
 
 // @desc    Login user and return access token & refresh token
-// @route   POST /api/v1/auth/login
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body
@@ -81,14 +80,12 @@ exports.loginUser = async (req, res) => {
 }
 
 // @desc    Logout user
-// @route   POST /api/v1/auth/logout
 exports.logoutUser = (req, res) => {
   res.clearCookie("token")
   res.status(200).json({ message: "Logout successful" })
 }
 
 // @desc    Get current user profile
-// @route   GET /api/v1/auth/me
 exports.getUserProfile = async (req, res) => {
   try {
     // Get token from cookie or Authorization header
@@ -116,7 +113,6 @@ exports.getUserProfile = async (req, res) => {
 }
 
 // @desc    Verify JWT Token
-// @route   POST /api/v1/auth/verify-access-token
 exports.verifyJwtAccessToken = (req, res) => {
   try {
     const token = req.token; // Get token from middleware
@@ -132,7 +128,6 @@ exports.verifyJwtAccessToken = (req, res) => {
 
 
 // @desc    Verify JWT Token
-// @route   POST /api/v1/auth/verify-refresh-token
 exports.verifyJwtRefreshToken = (req, res) => {
   try {
     const token  = req.token
@@ -149,7 +144,6 @@ exports.verifyJwtRefreshToken = (req, res) => {
 
 
 // @desc    Refresh access token using the refresh token
-// @route   POST /api/v1/auth/refresh
 exports.refreshAccessToken = async (req, res) => {
   try {
     const refreshToken  = req.token;
@@ -170,17 +164,16 @@ exports.refreshAccessToken = async (req, res) => {
 
 
 // @desc    Rotate Refresh access token using the refresh token
-// @route   POST /api/v1/auth/refresh
 exports.rotateRefreshToken = async (req, res) => {
   try {
     const refreshToken  = req.token;
 
      // Use jwtService to verify the token
      const decoded = jwtService.verifyRefreshToken(refreshToken)
-     const user = await userService.getUserById(decoded.id);
+     const user = userService.getUserById(decoded.id);
 
     // Validate and refresh access token
-    const newRefreshToken = await jwtService.createRefreshToken(user);
+    const newRefreshToken =jwtService.createRefreshToken(user);
     const  accessToken  =  jwtService.createAccessToken({ id: user._id, email: user.email })
     console.log('refresh token new',accessToken)
 
