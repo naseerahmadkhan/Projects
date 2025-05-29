@@ -15,13 +15,19 @@ const createAccessToken = (user) =>
     ACCESS_TOKEN_EXPIRES_IN
   );
 
-// Refresh token
-const createRefreshToken = (user) =>
-  generateToken(
+// Refresh token with DB update
+const createRefreshToken = async (user) => {
+  const refreshToken = generateToken(
     { id: user._id, type: 'refresh' },
     REFRESH_TOKEN_SECRET,
     REFRESH_TOKEN_EXPIRES_IN
   );
+  // Save new refresh token in the DB
+  user.refreshToken = refreshToken;
+  await user.save();
+
+  return refreshToken;
+};
 
 const verifyAccessToken = (token) =>
   verifyToken(token, ACCESS_TOKEN_SECRET, 'Invalid or expired access token');

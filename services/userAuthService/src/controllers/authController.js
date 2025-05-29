@@ -178,7 +178,7 @@ exports.rotateRefreshToken = async (req, res) => {
     }
 
     // 3. Generate new tokens
-    const newRefreshToken = jwtService.createRefreshToken(user);
+    const newRefreshToken = await jwtService.createRefreshToken(user);
     const accessToken = jwtService.createAccessToken({ id: user._id, email: user.email });
 
     // 4. Return tokens
