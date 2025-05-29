@@ -163,27 +163,33 @@ exports.refreshAccessToken = async (req, res) => {
 };
 
 
-// @desc    Rotate Refresh access token using the refresh token
+// @desc Rotate refresh token using the refresh token
 exports.rotateRefreshToken = async (req, res) => {
   try {
-    const refreshToken  = req.token;
+    const refreshToken = req.token; // Ensure this is set correctly via middleware
 
-     // Use jwtService to verify the token
-     const decoded = jwtService.verifyRefreshToken(refreshToken)
-     const user = userService.getUserById(decoded.id);
+    // 1. Verify the refresh token
+    const decoded = jwtService.verifyRefreshToken(refreshToken);
 
-    // Validate and refresh access token
-    const newRefreshToken =jwtService.createRefreshToken(user);
-    const  accessToken  =  jwtService.createAccessToken({ id: user._id, email: user.email })
-    console.log('refresh token new',accessToken)
+    // 2. Fetch user from DB
+    const user = await userService.getUserById(decoded.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
+    // 3. Generate new tokens
+    const newRefreshToken = jwtService.createRefreshToken(user);
+    const accessToken = jwtService.createAccessToken({ id: user._id, email: user.email });
+
+    // 4. Return tokens
     res.status(200).json({
-      message: 'Token Rotation successfully',
+      message: 'Token rotation successful',
       accessToken,
       refreshToken: newRefreshToken
     });
+
   } catch (err) {
     console.error('Refresh Token Error:', err.message);
-    res.status(401).json({ message: err.message });
+    res.status(401).json({ message: 'Invalid or expired refresh token' });
   }
 };
