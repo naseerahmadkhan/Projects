@@ -3,6 +3,9 @@ const User = require('../models/User');
 const jwtService = require('./jwtService'); // Import updated jwtService
 const { hashPassword, comparePassword } = require('../utils/authUtils'); // Import utility functions
 const {sendSms} = require('../utils/sendSms')
+const Otp = require('../models/Otp');
+const {generateOTP} = require('../utils/otp-generator');
+const bcrypt = require('bcrypt');
 
 // Service to register a new user
 const registerUser = async ({ email, password, firstName, lastName, isActive = false, isBlocked = false }) => {
@@ -11,10 +14,10 @@ const registerUser = async ({ email, password, firstName, lastName, isActive = f
     throw new Error('User with this email already exists');
   }
 
-  // Hash the password
+   // 1. Hash the password
   const hashedPassword = await hashPassword(password);
 
-  // Create the user with default/optional fields
+   // 2. Create user
   const user = new User({
     email,
     password: hashedPassword,
@@ -26,8 +29,29 @@ const registerUser = async ({ email, password, firstName, lastName, isActive = f
     changedPasswords: [hashedPassword], // store the first hashed password
   });
 
+
   await user.save();
-  sendSms(user.email)
+
+  // 3. Generate OTP
+  const otp = generateOTP(6); // e.g., '123456'
+  const hashedOtp = await bcrypt.hash(otp, 10);
+
+    // 4. Store OTP in DB
+    try {
+      await Otp.create({
+        userId: user._id,
+        otp: hashedOtp,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+      });
+      console.log('OTP saved to DB');
+    } catch (err) {
+      console.error('Failed to store OTP:', err.message);
+    }
+    
+
+  // 5. Send OTP via SMS or Email
+  await sendSms(user.email, `Your verification code is: ${otp}`);
+
   return user;
 };
 
