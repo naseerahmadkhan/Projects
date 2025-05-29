@@ -1,5 +1,6 @@
 const authService = require("../services/authService")
 const jwtService = require("../services/jwtService") // Import jwtService for JWT-related tasks
+const userService = require("../services/userService.js")
 
 // @desc    Register a new user
 // @route   POST /api/v1/auth/register
@@ -155,11 +156,38 @@ exports.refreshAccessToken = async (req, res) => {
 
 
     // Validate and refresh access token
-    const { accessToken } = await jwtService.refreshAccessToken(refreshToken);
+    const { accessToken } = await jwtService.generateAccessToken(refreshToken);
 
     res.status(200).json({
       message: 'Access token refreshed successfully',
       accessToken,
+    });
+  } catch (err) {
+    console.error('Refresh Token Error:', err.message);
+    res.status(401).json({ message: err.message });
+  }
+};
+
+
+// @desc    Rotate Refresh access token using the refresh token
+// @route   POST /api/v1/auth/refresh
+exports.rotateRefreshToken = async (req, res) => {
+  try {
+    const refreshToken  = req.token;
+
+     // Use jwtService to verify the token
+     const decoded = jwtService.verifyRefreshToken(refreshToken)
+     const user = await userService.getUserById(decoded.id);
+
+    // Validate and refresh access token
+    const newRefreshToken = await jwtService.createRefreshToken(user);
+    const  accessToken  =  jwtService.createAccessToken({ id: user._id, email: user.email })
+    console.log('refresh token new',accessToken)
+
+    res.status(200).json({
+      message: 'Token Rotation successfully',
+      accessToken,
+      refreshToken: newRefreshToken
     });
   } catch (err) {
     console.error('Refresh Token Error:', err.message);

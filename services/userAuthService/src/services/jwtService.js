@@ -22,7 +22,7 @@ const verifyRefreshToken = (token) =>
   verifyToken(token, REFRESH_TOKEN_SECRET, 'Invalid or expired refresh token');
 
 // Service to refresh the access token using refresh token
-const refreshAccessToken = async (refreshToken) => {
+const generateAccessToken = async (refreshToken) => {
   try {
     const decoded = verifyRefreshToken(refreshToken);
     if (!decoded) {
@@ -46,5 +46,5 @@ module.exports = {
   createRefreshToken,
   verifyAccessToken,
   verifyRefreshToken,
-  refreshAccessToken
+  generateAccessToken
 };

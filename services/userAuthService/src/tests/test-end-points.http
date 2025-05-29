@@ -28,7 +28,7 @@ http://localhost:5000/api/v1/auth/logout
 
 
 POST
-http://localhost:5000/api/v1/auth/get-refresh-token
+http://localhost:5000/api/v1/auth/refresh-access-token
 Headers:
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzQ1ZmVjMDM0ZTc0MTk0MjQyMGY2ZSIsImlhdCI6MTc0ODI2Mjk3NywiZXhwIjoxNzQ4ODY3Nzc3fQ.Vtn9yoxHS96GrxkhPQteC_TeEA1rzjQvxxQWCK_OrKo
 

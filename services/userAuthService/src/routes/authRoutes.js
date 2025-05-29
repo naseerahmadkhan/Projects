@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, logoutUser,refreshAccessToken} = require('../controllers/authController');
+const { registerUser, loginUser, logoutUser,refreshAccessToken,rotateRefreshToken} = require('../controllers/authController');
 const { userRegistrationMiddleware, loginMiddleware,checkAuthToken } = require('../middleware');
 
 
@@ -13,8 +13,11 @@ router.post('/login',loginMiddleware,loginUser);
 // Logout
 router.post('/logout',logoutUser);
 
-// Genrate Refresh token
-router.post('/generate-refresh-token',checkAuthToken, refreshAccessToken);
+// refresh access token + rotate refresh token
+router.post('/refresh',checkAuthToken, rotateRefreshToken);
+
+// refresh access token
+router.post('/refresh-access-token',checkAuthToken, refreshAccessToken);
 
 
 module.exports = router;
