@@ -106,6 +106,14 @@ const isOtpLocked = (otpRecord) => {
  * Calculate how many minutes are left until the user is unlocked.
  */
 const getRemainingLockMinutes = (lockedUntil) => {
+  //  lockedUntil = 2025-05-29T10:30:00.000Z
+  //  now = 2025-05-29T10:27:20.000Z
+  //  (lockedUntil - now) = 160000 milliseconds
+  //  160000 / 60000 = 2.66 minutes
+  //  Math.ceil(2.66) = 3
+  //  60000  milliseconds in one minute
+  //  "Try again in 3 minutes."
+
   const now = new Date();
   return Math.ceil((lockedUntil - now) / 60000);
 };
