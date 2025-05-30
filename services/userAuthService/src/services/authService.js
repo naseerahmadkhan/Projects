@@ -86,8 +86,37 @@ const getUserById = async (id) => {
   return user;
 };
 
+
+// Service to verify otp
+const verifyOtp = async (userId, otpInput) => {
+  const otpRecord = await Otp.findOne({ userId });
+
+  if (!otpRecord) {
+    throw new Error('No OTP found or already used');
+  }
+
+  if (otpRecord.expiresAt < new Date()) {
+    await Otp.deleteOne({ userId });
+    throw new Error('OTP has expired');
+  }
+
+  const isMatch = await bcrypt.compare(otpInput, otpRecord.otp);
+  if (!isMatch) {
+    throw new Error('Invalid OTP');
+  }
+
+  // Optional: Mark user as verified
+  await User.findByIdAndUpdate(userId, { isActive: true });
+
+  // Optional: Delete OTP after successful verification
+  await Otp.deleteOne({ userId });
+
+  return true;
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getUserById,
+  verifyOtp
 };

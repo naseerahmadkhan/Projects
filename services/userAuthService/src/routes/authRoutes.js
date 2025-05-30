@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, logoutUser,refreshAccessToken,rotateRefreshToken} = require('../controllers/authController');
+const { registerUser, loginUser, logoutUser,refreshAccessToken,rotateRefreshToken,verifyOtpController} = require('../controllers/authController');
 const { userRegistrationMiddleware, loginMiddleware,parseToken } = require('../middleware');
 
 
@@ -18,6 +18,9 @@ router.post('/refresh',parseToken, rotateRefreshToken);
 
 // refresh access token
 router.post('/refresh-access-token',parseToken, refreshAccessToken);
+
+// verify otp
+router.post('/verify-otp',verifyOtpController)
 
 
 module.exports = router;

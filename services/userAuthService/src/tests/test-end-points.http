@@ -53,3 +53,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzQ1ZmVjM
 POST
 http://localhost:5000/api/v1/verify/verify-refresh-token
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzQ1ZmVjMDM0ZTc0MTk0MjQyMGY2ZSIsImlhdCI6MTc0ODI2Mjk3NywiZXhwIjoxNzQ4ODY3Nzc3fQ.Vtn9yoxHS96GrxkhPQteC_TeEA1rzjQvxxQWCK_OrKo
+
+# -----------------------------------------------------------------------------------------------------
+POST
+http://localhost:5000/api/v1/auth/verify-otp
+
+Body:
+{
+  "userId": "68395439eb0f7f9fad91a0f0",
+  "otp": "773442"
+}

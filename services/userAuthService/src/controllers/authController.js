@@ -193,3 +193,22 @@ exports.rotateRefreshToken = async (req, res) => {
     res.status(401).json({ message: 'Invalid or expired refresh token' });
   }
 };
+
+
+// @desc Verify OTP
+// @route POST /api/v1/auth/verify-otp
+exports.verifyOtpController = async (req, res) => {
+  try {
+    const { userId, otp } = req.body;
+    if (!userId || !otp) {
+      return res.status(400).json({ message: 'User ID and OTP are required' });
+    }
+
+    await authService.verifyOtp(userId, otp);
+    res.status(200).json({ message: 'OTP verified successfully' });
+
+  } catch (err) {
+    console.error('OTP Verification Error:', err.message);
+    res.status(400).json({ message: err.message });
+  }
+};
