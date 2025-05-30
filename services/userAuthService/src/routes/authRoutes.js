@@ -1,26 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, logoutUser,refreshAccessToken,rotateRefreshToken,verifyOtpController} = require('../controllers/authController');
-const { userRegistrationMiddleware, loginMiddleware,parseToken } = require('../middleware');
+const authController = require('../controllers/authController');
+const middleware = require('../middleware');
+
 
 
 // Register route with validation
-router.post('/register',userRegistrationMiddleware,registerUser);
+router.post('/register',middleware.userRegistrationMiddleware,authController.registerUser);
 
 // Login route with validation
-router.post('/login',loginMiddleware,loginUser);
+router.post('/login',middleware.loginMiddleware,authController.loginUser);
 
 // Logout
-router.post('/logout',logoutUser);
+router.post('/logout',authController.logoutUser);
 
 // refresh access token + rotate refresh token
-router.post('/refresh',parseToken, rotateRefreshToken);
+router.post('/refresh',middleware.parseToken, authController.rotateRefreshToken);
 
 // refresh access token
-router.post('/refresh-access-token',parseToken, refreshAccessToken);
+router.post('/refresh-access-token',middleware.parseToken, authController.refreshAccessToken);
 
 // verify otp
-router.post('/verify-otp',verifyOtpController)
+router.post('/verify-otp',authController.verifyOtpController)
 
 
 module.exports = router;
