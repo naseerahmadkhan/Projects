@@ -209,6 +209,7 @@ exports.verifyOtp = async (req, res) => {
 
   } catch (err) {
     console.error('OTP Verification Error:', err.message);
-    res.status(400).json({ message: err.message });
+    res.status(err.message === 'Invalid OTP' ? 401 : 400).json({ message: err.message });
+
   }
 };

@@ -1,4 +1,3 @@
-// models/Otp.js
 const mongoose = require('mongoose');
 
 const otpSchema = new mongoose.Schema({
@@ -14,6 +13,14 @@ const otpSchema = new mongoose.Schema({
   expiresAt: {
     type: Date,
     required: true,
+  },
+  attempts: {
+    type: Number,
+    default: 0,
+  },
+  lockedUntil: {
+    type: Date,
+    default: null,
   },
 }, { timestamps: true });
 

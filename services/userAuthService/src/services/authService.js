@@ -7,6 +7,10 @@ const Otp = require('../models/Otp');
 const {generateOTP} = require('../utils/otp-generator');
 const bcrypt = require('bcrypt');
 
+// Constants for maximum attempts and lock duration
+const MAX_ATTEMPTS = 3;
+const LOCK_DURATION_MINUTES = 15;
+
 // Service to register a new user
 const registerUser = async ({ email, password, firstName, lastName, isActive = false, isBlocked = false }) => {
   const userExists = await User.findOne({ email });
@@ -87,28 +91,81 @@ const getUserById = async (id) => {
 };
 
 
-// Service to verify otp
-const verifyOtp = async (userId, otpInput) => {
-  const otpRecord = await Otp.findOne({ userId });
 
-  if (!otpRecord) {
-    throw new Error('No OTP found or already used');
+
+
+/**
+ * Check if the OTP is currently locked due to too many failed attempts.
+ */
+const isOtpLocked = (otpRecord) => {
+  const now = new Date();
+  return otpRecord.lockedUntil && otpRecord.lockedUntil > now;
+};
+
+/**
+ * Calculate how many minutes are left until the user is unlocked.
+ */
+const getRemainingLockMinutes = (lockedUntil) => {
+  const now = new Date();
+  return Math.ceil((lockedUntil - now) / 60000);
+};
+
+/**
+ * Check if the OTP has expired.
+ */
+const hasOtpExpired = (otpRecord) => {
+  return otpRecord.expiresAt < new Date();
+};
+
+/**
+ * Set a lock on the OTP record for a specified duration.
+ */
+const lockOtp = (otpRecord) => {
+  otpRecord.lockedUntil = new Date(Date.now() + LOCK_DURATION_MINUTES * 60 * 1000);
+};
+
+/**
+ * Handle failed OTP attempts by incrementing the counter and locking if necessary.
+ */
+const handleInvalidOtp = async (otpRecord) => {
+  otpRecord.attempts += 1;
+
+  if (otpRecord.attempts >= MAX_ATTEMPTS) {
+    lockOtp(otpRecord);
   }
 
-  if (otpRecord.expiresAt < new Date()) {
-    await Otp.deleteOne({ userId });
+  await otpRecord.save();
+};
+
+/**
+ * Main service to verify the OTP for a user.
+ */
+const verifyOtp = async (userId, otpInput) => {
+  // 1. Fetch OTP record from the database
+  const otpRecord = await Otp.findOne({ userId });
+  if (!otpRecord) throw new Error('No OTP found or already used');
+
+  // 2. Check if the OTP is currently locked
+  if (isOtpLocked(otpRecord)) {
+    const remaining = getRemainingLockMinutes(otpRecord.lockedUntil);
+    throw new Error(`Too many failed attempts. Try again in ${remaining} minute(s).`);
+  }
+
+  // 3. Check if OTP has expired
+  if (hasOtpExpired(otpRecord)) {
+    await Otp.deleteOne({ userId }); // Clean up expired OTP
     throw new Error('OTP has expired');
   }
 
+  // 4. Compare input OTP with hashed OTP in DB
   const isMatch = await bcrypt.compare(otpInput, otpRecord.otp);
   if (!isMatch) {
+    await handleInvalidOtp(otpRecord); // Track failed attempt
     throw new Error('Invalid OTP');
   }
 
-  // Optional: Mark user as verified
+  // 5. OTP is valid — mark user as active and delete OTP record
   await User.findByIdAndUpdate(userId, { isActive: true });
-
-  // Optional: Delete OTP after successful verification
   await Otp.deleteOne({ userId });
 
   return true;
