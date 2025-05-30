@@ -3,6 +3,7 @@ const router = express.Router();
 
 const authRoutes = require('./authRoutes');
 const jwtRoutes = require('./jwtRoutes')
+const userRoutes = require('./userRoutes');
 const signupMiddleware = require('../middleware/userRegistrationMiddleware');
 const {parseToken} = require('../middleware');
 // const { authMiddleware } = require('../middleware/authMiddleware'); // Import the authMiddleware
@@ -14,6 +15,7 @@ const {parseToken} = require('../middleware');
 // router.use('/auth',signupMiddleware,authRoutes);
 router.use('/auth',authRoutes);
 router.use('/verify',parseToken,jwtRoutes);
+router.use('/user',userRoutes)
 
 
 module.exports = router;
