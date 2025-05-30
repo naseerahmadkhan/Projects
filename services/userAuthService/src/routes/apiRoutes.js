@@ -4,7 +4,6 @@ const router = express.Router();
 const authRoutes = require('./authRoutes');
 const jwtRoutes = require('./jwtRoutes')
 const userRoutes = require('./userRoutes');
-const signupMiddleware = require('../middleware/userRegistrationMiddleware');
 const {parseToken} = require('../middleware');
 // const { authMiddleware } = require('../middleware/authMiddleware'); // Import the authMiddleware
 // const { csrfProtection } = require('../middleware/csrfProtection'); // Import the csrfProtection middleware

@@ -1,9 +1,8 @@
-const userRegistrationMiddleware = require('./userRegistrationMiddleware');
-const loginMiddleware = require('./loginMiddleware');
+const {validateLogin,validateRegistration} = require('./authMiddleware')
 const parseToken = require('./parseToken');
 
 module.exports = {
-  userRegistrationMiddleware,
-  loginMiddleware,
+  validateLogin,
+  validateRegistration,
   parseToken
 };

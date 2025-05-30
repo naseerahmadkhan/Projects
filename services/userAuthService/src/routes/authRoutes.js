@@ -6,10 +6,10 @@ const middleware = require('../middleware');
 
 
 // Register route with validation
-router.post('/register',middleware.userRegistrationMiddleware,authController.registerUser);
+router.post('/register',middleware.validateRegistration,authController.registerUser);
 
 // Login route with validation
-router.post('/login',middleware.loginMiddleware,authController.loginUser);
+router.post('/login',middleware.validateLogin,authController.loginUser);
 
 // Logout
 router.post('/logout',authController.logoutUser);
