@@ -197,7 +197,7 @@ exports.rotateRefreshToken = async (req, res) => {
 
 // @desc Verify OTP
 // @route POST /api/v1/auth/verify-otp
-exports.verifyOtpController = async (req, res) => {
+exports.verifyOtp = async (req, res) => {
   try {
     const { userId, otp } = req.body;
     if (!userId || !otp) {

@@ -21,7 +21,7 @@ router.post('/refresh',middleware.parseToken, authController.rotateRefreshToken)
 router.post('/refresh-access-token',middleware.parseToken, authController.refreshAccessToken);
 
 // verify otp
-router.post('/verify-otp',authController.verifyOtpController)
+router.post('/verify-otp',authController.verifyOtp)
 
 
 module.exports = router;
