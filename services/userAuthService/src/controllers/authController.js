@@ -213,3 +213,25 @@ exports.verifyOtp = async (req, res) => {
 
   }
 };
+
+
+
+exports.requestPasswordReset = async (req, res) => {
+  try {
+    await authService.requestPasswordReset(req.body.email);
+    res.json({ message: "Reset link sent to your email" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const {newPassword } = req.body;
+  const token = req.query.token;
+  try {
+    await authService.resetPassword(token, newPassword);
+    res.json({ message: "Password reset successful" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};

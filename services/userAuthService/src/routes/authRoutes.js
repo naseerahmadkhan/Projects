@@ -23,5 +23,10 @@ router.post('/refresh-access-token',middleware.parseToken, authController.refres
 // verify otp
 router.post('/verify-otp',authController.verifyOtp)
 
+// requst password reset
+router.post("/request-reset-password", authController.requestPasswordReset);
+
+router.post("/reset-password", authController.resetPassword);
+
 
 module.exports = router;

@@ -3,8 +3,10 @@ const User = require('../models/User');
 const {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
+  RESET_PASSWORD_TOKEN_SECRET,
   ACCESS_TOKEN_EXPIRES_IN,
   REFRESH_TOKEN_EXPIRES_IN,
+  RESET_PASSWORD_TOKEN_EXPIRES_IN
 } = process.env;
 
 // Access token
@@ -59,10 +61,27 @@ const generateAccessToken = async (refreshToken) => {
   }
 };
 
+
+// Reset Password Token
+const requestResetPasswordToken = (user) =>
+  generateToken(
+    { id: user._id, email: user.email, type: 'reset_password' },
+    RESET_PASSWORD_TOKEN_SECRET,
+    RESET_PASSWORD_TOKEN_EXPIRES_IN
+  );
+
+// Verify Reset Password Token  
+const verifyResetPasswordToken = (token)=>{
+ return verifyToken(token, RESET_PASSWORD_TOKEN_SECRET, 'Invalid or expired token');
+}  
+
+
 module.exports = {
   createAccessToken,
   createRefreshToken,
   verifyAccessToken,
   verifyRefreshToken,
+  verifyResetPasswordToken,
   generateAccessToken,
+  requestResetPasswordToken,
 };

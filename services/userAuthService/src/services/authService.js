@@ -3,6 +3,7 @@ const User = require('../models/User');
 const jwtService = require('./jwtService'); // Import updated jwtService
 const { hashPassword, comparePassword } = require('../utils/authUtils'); // Import utility functions
 const {sendSms} = require('../utils/sendSms')
+const { sendEmail } = require('../utils/sendEmail');
 const Otp = require('../models/Otp');
 const {generateOTP} = require('../utils/otp-generator');
 const bcrypt = require('bcrypt');
@@ -179,9 +180,43 @@ const verifyOtp = async (userId, otpInput) => {
   return true;
 };
 
+
+
+const requestPasswordReset = async (email) => {
+  const user = await User.findOne({ email });
+  if (!user) throw new Error("User not found");
+
+  const resetToken = await jwtService.requestResetPasswordToken(user);
+  
+  const resetLink = `${process.env.BASE_URL}/reset-password?token=${resetToken}`;
+  console.log('resettoken',resetLink);
+  await sendEmail(user.email, "Reset your password", `Reset your password here:\n${resetLink}`);
+
+  return true;
+};
+
+
+const resetPassword = async (token, newPassword) => {
+  const decoded = await jwtService.verifyResetPasswordToken(token)
+  const user = await User.findById(decoded.id);
+  if (!user) throw new Error("User not found");
+
+  // Save old password hash to history
+  user.changedPasswords.push(user.password);
+
+  // Update to new password after hashing
+  const hashedPassword = await hashPassword(newPassword)
+  user.password = hashedPassword;
+
+  await user.save();
+  return true;
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getUserById,
-  verifyOtp
+  verifyOtp,
+  requestPasswordReset,
+  resetPassword
 };
