@@ -188,7 +188,7 @@ const requestPasswordReset = async (email) => {
 
   const resetToken = await jwtService.requestResetPasswordToken(user);
   
-  const resetLink = `${process.env.BASE_URL}/reset-password?token=${resetToken}`;
+  const resetLink = `${process.env.BASE_URL}/auth/reset-password?token=${resetToken}`;
   console.log('resettoken',resetLink);
   await sendEmail(user.email, "Reset your password", `Reset your password here:\n${resetLink}`);
 
@@ -201,11 +201,13 @@ const resetPassword = async (token, newPassword) => {
   const user = await User.findById(decoded.id);
   if (!user) throw new Error("User not found");
 
-  // Save old password hash to history
-  user.changedPasswords.push(user.password);
+  
 
   // Update to new password after hashing
   const hashedPassword = await hashPassword(newPassword)
+
+  // Save old password hash to history
+  user.changedPasswords.push(hashedPassword);
   user.password = hashedPassword;
 
   await user.save();
