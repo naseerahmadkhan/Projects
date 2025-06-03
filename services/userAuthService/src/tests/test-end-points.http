@@ -63,3 +63,11 @@ Body:
   "userId": "68395439eb0f7f9fad91a0f0",
   "otp": "773442"
 }
+
+POST
+http://localhost:5000/api/v1/auth/reset-password?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4M2VjMGQ5NmUwZDM3MDZhNDM3OTIzMSIsImVtYWlsIjoiYWxpY2VAZXhhbXBsZS5jb20iLCJ0eXBlIjoicmVzZXRfcGFzc3dvcmQiLCJpYXQiOjE3NDg5NDM0NDYsImV4cCI6MTc0ODk0NDA0Nn0.mVKB3FM3qM7EHBPgTuSktgQcR6enQ5qm4KAZg8LRVqE
+
+Body:
+{
+    "newPassword":"123456789"
+}
