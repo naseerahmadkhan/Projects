@@ -1,0 +1,352 @@
+{
+  "Headline": {
+    "EffectiveDate": "2025-07-03T01:00:00+05:00",
+    "EffectiveEpochDate": 1751486400,
+    "Severity": 5,
+    "Text": "A thunderstorm late Wednesday night",
+    "Category": "thunderstorm",
+    "EndDate": "2025-07-03T07:00:00+05:00",
+    "EndEpochDate": 1751508000,
+    "MobileLink": "http://www.accuweather.com/en/pk/pakpattan/259629/daily-weather-forecast/259629?unit=c&lang=en-us",
+    "Link": "http://www.accuweather.com/en/pk/pakpattan/259629/daily-weather-forecast/259629?unit=c&lang=en-us"
+  },
+  "DailyForecasts": [
+    {
+      "Date": "2025-07-02T07:00:00+05:00",
+      "EpochDate": 1751421600,
+      "Sun": {
+        "Rise": "2025-07-02T05:08:00+05:00",
+        "EpochRise": 1751414880,
+        "Set": "2025-07-02T19:12:00+05:00",
+        "EpochSet": 1751465520
+      },
+      "Moon": {
+        "Rise": "2025-07-02T11:48:00+05:00",
+        "EpochRise": 1751438880,
+        "Set": "2025-07-02T23:45:00+05:00",
+        "EpochSet": 1751481900,
+        "Phase": "WaxingCrescent",
+        "Age": 7
+      },
+      "Temperature": {
+        "Minimum": {
+          "Value": 27.8,
+          "Unit": "C",
+          "UnitType": 17
+        },
+        "Maximum": {
+          "Value": 38.3,
+          "Unit": "C",
+          "UnitType": 17
+        }
+      },
+      "RealFeelTemperature": {
+        "Minimum": {
+          "Value": 32.9,
+          "Unit": "C",
+          "UnitType": 17,
+          "Phrase": "Hot"
+        },
+        "Maximum": {
+          "Value": 46.4,
+          "Unit": "C",
+          "UnitType": 17,
+          "Phrase": "Very Dangerous Heat"
+        }
+      },
+      "RealFeelTemperatureShade": {
+        "Minimum": {
+          "Value": 32.9,
+          "Unit": "C",
+          "UnitType": 17,
+          "Phrase": "Hot"
+        },
+        "Maximum": {
+          "Value": 42.5,
+          "Unit": "C",
+          "UnitType": 17,
+          "Phrase": "Dangerous Heat"
+        }
+      },
+      "HoursOfSun": 13.5,
+      "DegreeDaySummary": {
+        "Heating": {
+          "Value": 0,
+          "Unit": "C",
+          "UnitType": 17
+        },
+        "Cooling": {
+          "Value": 15,
+          "Unit": "C",
+          "UnitType": 17
+        }
+      },
+      "AirAndPollen": [
+        {
+          "Name": "AirQuality",
+          "Value": 0,
+          "Category": "Good",
+          "CategoryValue": 1,
+          "Type": "Ozone"
+        },
+        {
+          "Name": "Grass",
+          "Value": 0,
+          "Category": "Low",
+          "CategoryValue": 1
+        },
+        {
+          "Name": "Mold",
+          "Value": 0,
+          "Category": "Low",
+          "CategoryValue": 1
+        },
+        {
+          "Name": "Ragweed",
+          "Value": 0,
+          "Category": "Low",
+          "CategoryValue": 1
+        },
+        {
+          "Name": "Tree",
+          "Value": 0,
+          "Category": "Low",
+          "CategoryValue": 1
+        },
+        {
+          "Name": "UVIndex",
+          "Value": 12,
+          "Category": "Extreme",
+          "CategoryValue": 5
+        }
+      ],
+      "Day": {
+        "Icon": 5,
+        "IconPhrase": "Hazy sunshine",
+        "HasPrecipitation": false,
+        "ShortPhrase": "Hazy sunshine",
+        "LongPhrase": "Hazy sunshine",
+        "PrecipitationProbability": 5,
+        "ThunderstormProbability": 1,
+        "RainProbability": 5,
+        "SnowProbability": 0,
+        "IceProbability": 0,
+        "Wind": {
+          "Speed": {
+            "Value": 14.8,
+            "Unit": "km/h",
+            "UnitType": 7
+          },
+          "Direction": {
+            "Degrees": 112,
+            "Localized": "ESE",
+            "English": "ESE"
+          }
+        },
+        "WindGust": {
+          "Speed": {
+            "Value": 25.9,
+            "Unit": "km/h",
+            "UnitType": 7
+          },
+          "Direction": {
+            "Degrees": 126,
+            "Localized": "SE",
+            "English": "SE"
+          }
+        },
+        "TotalLiquid": {
+          "Value": 0,
+          "Unit": "mm",
+          "UnitType": 3
+        },
+        "Rain": {
+          "Value": 0,
+          "Unit": "mm",
+          "UnitType": 3
+        },
+        "Snow": {
+          "Value": 0,
+          "Unit": "cm",
+          "UnitType": 4
+        },
+        "Ice": {
+          "Value": 0,
+          "Unit": "mm",
+          "UnitType": 3
+        },
+        "HoursOfPrecipitation": 0,
+        "HoursOfRain": 0,
+        "HoursOfSnow": 0,
+        "HoursOfIce": 0,
+        "CloudCover": 4,
+        "Evapotranspiration": {
+          "Value": 7.1,
+          "Unit": "mm",
+          "UnitType": 3
+        },
+        "SolarIrradiance": {
+          "Value": 9187.8,
+          "Unit": "W/m²",
+          "UnitType": 33
+        },
+        "RelativeHumidity": {
+          "Minimum": 46,
+          "Maximum": 73,
+          "Average": 55
+        },
+        "WetBulbTemperature": {
+          "Minimum": {
+            "Value": 26.7,
+            "Unit": "C",
+            "UnitType": 17
+          },
+          "Maximum": {
+            "Value": 28.6,
+            "Unit": "C",
+            "UnitType": 17
+          },
+          "Average": {
+            "Value": 27.9,
+            "Unit": "C",
+            "UnitType": 17
+          }
+        },
+        "WetBulbGlobeTemperature": {
+          "Minimum": {
+            "Value": 29.8,
+            "Unit": "C",
+            "UnitType": 17
+          },
+          "Maximum": {
+            "Value": 34,
+            "Unit": "C",
+            "UnitType": 17
+          },
+          "Average": {
+            "Value": 32.4,
+            "Unit": "C",
+            "UnitType": 17
+          }
+        }
+      },
+      "Night": {
+        "Icon": 41,
+        "IconPhrase": "Partly cloudy w/ t-storms",
+        "HasPrecipitation": true,
+        "PrecipitationType": "Rain",
+        "PrecipitationIntensity": "Moderate",
+        "ShortPhrase": "A thunderstorm in spots late",
+        "LongPhrase": "Mainly clear with a thunderstorm in parts of the area late",
+        "PrecipitationProbability": 45,
+        "ThunderstormProbability": 27,
+        "RainProbability": 45,
+        "SnowProbability": 0,
+        "IceProbability": 0,
+        "Wind": {
+          "Speed": {
+            "Value": 11.1,
+            "Unit": "km/h",
+            "UnitType": 7
+          },
+          "Direction": {
+            "Degrees": 137,
+            "Localized": "SE",
+            "English": "SE"
+          }
+        },
+        "WindGust": {
+          "Speed": {
+            "Value": 22.2,
+            "Unit": "km/h",
+            "UnitType": 7
+          },
+          "Direction": {
+            "Degrees": 178,
+            "Localized": "S",
+            "English": "S"
+          }
+        },
+        "TotalLiquid": {
+          "Value": 3.3,
+          "Unit": "mm",
+          "UnitType": 3
+        },
+        "Rain": {
+          "Value": 3.3,
+          "Unit": "mm",
+          "UnitType": 3
+        },
+        "Snow": {
+          "Value": 0,
+          "Unit": "cm",
+          "UnitType": 4
+        },
+        "Ice": {
+          "Value": 0,
+          "Unit": "mm",
+          "UnitType": 3
+        },
+        "HoursOfPrecipitation": 1,
+        "HoursOfRain": 1,
+        "HoursOfSnow": 0,
+        "HoursOfIce": 0,
+        "CloudCover": 9,
+        "Evapotranspiration": {
+          "Value": 0.8,
+          "Unit": "mm",
+          "UnitType": 3
+        },
+        "SolarIrradiance": {
+          "Value": 216.8,
+          "Unit": "W/m²",
+          "UnitType": 33
+        },
+        "RelativeHumidity": {
+          "Minimum": 55,
+          "Maximum": 82,
+          "Average": 69
+        },
+        "WetBulbTemperature": {
+          "Minimum": {
+            "Value": 25.7,
+            "Unit": "C",
+            "UnitType": 17
+          },
+          "Maximum": {
+            "Value": 27.6,
+            "Unit": "C",
+            "UnitType": 17
+          },
+          "Average": {
+            "Value": 26.9,
+            "Unit": "C",
+            "UnitType": 17
+          }
+        },
+        "WetBulbGlobeTemperature": {
+          "Minimum": {
+            "Value": 28.1,
+            "Unit": "C",
+            "UnitType": 17
+          },
+          "Maximum": {
+            "Value": 32,
+            "Unit": "C",
+            "UnitType": 17
+          },
+          "Average": {
+            "Value": 30.2,
+            "Unit": "C",
+            "UnitType": 17
+          }
+        }
+      },
+      "Sources": [
+        "AccuWeather"
+      ],
+      "MobileLink": "http://www.accuweather.com/en/pk/pakpattan/259629/daily-weather-forecast/259629?day=1&unit=c&lang=en-us",
+      "Link": "http://www.accuweather.com/en/pk/pakpattan/259629/daily-weather-forecast/259629?day=1&unit=c&lang=en-us"
+    }
+  ]
+}
