@@ -58,7 +58,7 @@ const WeatherModal = ({ show, name, hideModal }) => {
         >
           <View style={{flex:1}}>
             <View style={{flex:0.9}}>
-              <Text>{msg}</Text>
+              <Text style={{backgroundColor:'white',color:'black'}}>{msg}</Text>
             </View>
             <View style={{flexDirection:'row', justifyContent:'center', gap:10}}>
               <Button

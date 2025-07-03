@@ -62,9 +62,7 @@ export const prevailingWeatherMsg = async()=>{
   const nightRainProbability = forecast.DailyForecasts[0].Night.RainProbability
   const MaxProb = Math.max(dayRainProbability,nightRainProbability)
   const MinProb = Math.min(dayRainProbability,nightRainProbability)
-  const msg = `*PREVAILING WEATHER 
-  CONDITIONS IN DISTRICT 
-  PAKPATTAN*
+  const msg = `*PREVAILING WEATHER                                                                                                                                                                                                                                               CONDITIONS IN DISTRICT                                                                                                                                                                                                                                        PAKPATTAN*
  Dated: ${dated}
 
 Temp: ${temp} °C
