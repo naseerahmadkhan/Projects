@@ -163,7 +163,7 @@ export const combinedWeatherMsg = async ()=>{
   const forecast= await get1DayForecastDataPakpattan()
  
 
-  const temp = Math.round(data[0].Temperature.Metric.Value)
+  const temp = data[0].Temperature.Metric.Value
   const humidity = data[0].RelativeHumidity
   const wind = data[0].Wind.Speed.Metric.Value
   const windGust = data[0].WindGust.Speed.Metric.Value
@@ -176,35 +176,41 @@ export const combinedWeatherMsg = async ()=>{
   const last24data = await getLast24HoursWeaterDataPakpattan()
    const last24ArifwalaData = await getLast24HoursWeaterDataArifWala()
 
-  let maximum = null
-  let minimum = null
-  let rainPPNAvg = last24data[0].PrecipitationSummary.Past24Hours.Metric.Value
-  let rainArifwalaAvg = last24ArifwalaData[0].PrecipitationSummary.Past24Hours.Metric.Value
+  let maximum = last24data[0].TemperatureSummary.Past24HourRange.Maximum.Metric.Value;  //corrected
+  let minimum = last24data[0].TemperatureSummary.Past24HourRange.Minimum.Metric.Value;  //corrected
+  let rainPPNAvg = last24data[0].PrecipitationSummary.Past24Hours.Metric.Value;         //corrected
+  let rainArifwalaAvg = last24ArifwalaData[0].PrecipitationSummary.Past24Hours.Metric.Value  //corrected
 
-  let minWindSpeed = null
-  let maxWindSpeed = null
+  
   let skies24 = last24data[0].WeatherText
 
-  let temp24 = []
-  let windSpeed = []
-  let humidityTemp = []
  
- for(let i=0; i<=23; i++){
-  temp24.push(last24data[i].TemperatureSummary.Past24HourRange.Minimum.Metric.Value)
-  windSpeed.push(last24data[i].Wind.Speed.Metric.Value)
-   humidityTemp.push(last24data[i].RelativeHumidity)
-   
+
  
- }
- maximum = Math.max(...temp24)
- minimum = Math.min(...temp24)
+ let windSpeeds = last24data.map(item => item.Wind.Speed.Metric.Value);
 
- minWindSpeed= Math.min(...windSpeed)
- maxWindSpeed = Math.max(...windSpeed)
+let minWind = Math.min(...windSpeeds);    //corrected
+let maxWind = Math.max(...windSpeeds);    //corrected
 
-//  humidity last 24 max and min
- let humidityLast24Min= Math.min(...humidityTemp)
- let humidityLast24Max = Math.max(...humidityTemp)
+let humidities = last24data.map(item => item.RelativeHumidity);
+
+let minHumidity = Math.min(...humidities);
+let maxHumidity = Math.max(...humidities);
+let avgHumidity = (humidities.reduce((sum, h) => sum + h, 0) / humidities.length).toFixed(1);
+
+let weatherTexts = last24data.map(item => item.WeatherText);
+
+// Count frequency of each weather text
+let freq = {};
+for (let text of weatherTexts) {
+  freq[text] = (freq[text] || 0) + 1;
+}
+
+// Find the most common one
+let mostCommonSkies = Object.entries(freq).reduce((a, b) => (b[1] > a[1] ? b : a))[0];
+
+
+
 
 
 
@@ -226,9 +232,9 @@ Date: ${dated}
     - Pakpattan : ${rainPPNAvg}mm
     - Arifwala: ${rainArifwalaAvg}mm
     - District Average: ${(rainPPNAvg+rainArifwalaAvg)/2} mm
-* Wind Speed: ${minWindSpeed}kph - ${maxWindSpeed}kph
-* Humidity: ${humidityLast24Min} - ${humidityLast24Max}%
-* Skies: ${skies24}
+* Wind Speed: ${minWind}kph - ${maxWind}kph
+* Humidity: ${avgHumidity}%
+* Skies: ${mostCommonSkies}
 
 *Riaz Ahmed, Deputy Director Agriculture Extension Pakpattan*`;
 
