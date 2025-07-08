@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { Modal, Portal, Text, PaperProvider, Button } from 'react-native-paper';
 import Loader from '../loader/Loader';
-import { prevailingWeatherMsg,last24HourWeatherMsg } from '../../utils/utils';
+import { prevailingWeatherMsg,last24HourWeatherMsg,combinedWeatherMsg } from '../../utils/utils';
 import { useState,useEffect } from 'react';
 import Clipboard from '@react-native-clipboard/clipboard';
 
@@ -24,9 +24,19 @@ const WeatherModal = ({ show, name, hideModal }) => {
         } finally {
           setIsLoading(false);
         }
-      } else {
+      } else if(name === 'last24hours') {
         try {
           const message = await last24HourWeatherMsg();
+          setMsg(message);
+        } catch (error) {
+          console.error('Error getting prevailing weather message:', error);
+          setMsg('Unable to load message.');
+        } finally {
+          setIsLoading(false);
+        }
+      } else if(name === 'combined') {
+        try {
+          const message = await combinedWeatherMsg();
           setMsg(message);
         } catch (error) {
           console.error('Error getting prevailing weather message:', error);

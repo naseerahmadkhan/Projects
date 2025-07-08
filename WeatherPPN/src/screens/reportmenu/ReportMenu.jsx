@@ -8,7 +8,7 @@ const ReportMenu = ({showModal}) => {
     const today = getCurrentDate();
   return (
     <View style={styles.container}>
-      <View style={{ flex: 0.2, marginBottom: '5%' }}>
+      <View style={{ flex: 0.2,  }}>
         <Text variant="headlineLarge">Weather Report</Text>
         <Text style={{ textAlign: 'center' }} variant="headlineSmall">
           Pakpattan
@@ -17,9 +17,9 @@ const ReportMenu = ({showModal}) => {
           {today}
         </Text>
       </View>
-      <View style={{ flex: 0.5 }}>
+      <View style={{ flex: 0.5, flexDirection:'column',gap:15}}>
         <Button
-          style={{ width: 250, backgroundColor: 'green', marginBottom: '5%' }}
+          style={{ width: 250, backgroundColor: 'green', }}
           icon="weather-sunny-alert"
           mode="contained"
           onPress={() => showModal('prevailing')}
@@ -34,6 +34,15 @@ const ReportMenu = ({showModal}) => {
           onPress={() => showModal('last24hours')}
         >
           Last 24 hours Weather
+        </Button>
+
+        <Button
+          style={{ width: 250, backgroundColor:'orange' }}
+          icon="white-balance-sunny"
+          mode="contained"
+          onPress={() => showModal('combined')}
+        >
+          Combined Weather Msg
         </Button>
       </View>
     </View>

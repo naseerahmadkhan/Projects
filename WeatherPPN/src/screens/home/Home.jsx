@@ -5,7 +5,7 @@ import ReportMenu from '../reportmenu/ReportMenu';
 // import forecast from './forecast.json'
 
 const Home = () => {
-  const [show, setShow] = useState({prevailing:false,last24hours:false});
+  const [show, setShow] = useState({prevailing:false,last24hours:false,combined:false});
                            
 
                                   
@@ -22,17 +22,13 @@ const Home = () => {
 
    return( 
     <>
-    {!(show.prevailing) && !(show.last24hours) &&  <ReportMenu showModal={showModal}/>}
+    {!(show.prevailing) && !(show.last24hours) && !(show.combined) &&  <ReportMenu showModal={showModal}/>}
     { show.prevailing && <WeatherModal show={show}  name={"prevailing"} hideModal={()=>hideModal('prevailing')} />}
     { show.last24hours && <WeatherModal show={show} name={"last24hours"} hideModal={()=>hideModal('last24hours')} />}
+    { show.combined && <WeatherModal show={show} name={"combined"} hideModal={()=>hideModal('combined')} />}
     </>
     
 )
-
-  // if (show)
-  //   return <WeatherModal show={show}  hideModal={hideModal} />;
-  // else
-  //   return <ReportMenu showModal={showModal} ops={menu}/>
 
   
 };
