@@ -50,6 +50,19 @@ export const get1DayForecastDataPakpattan = async() =>{
   }
 }
 
+export const getHourlyForecastDataPakpattan = async() =>{
+  try {
+    const response = await fetch(Constants.API.HOURLYFORECAST);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data
+  } catch (error) {
+    alert(JSON.stringify(error));
+  }
+}
+
 export const getLast24HoursWeaterDataPakpattan = async() =>{
  try {
     const response = await fetch(Constants.API.LAST24Hours);
