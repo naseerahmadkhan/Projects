@@ -8,6 +8,22 @@ export const getCurrentDate = () => {
   return `${dd}.${mm}.${yyyy}`;
 };
 
+export const getCurrentDate2 = () => {
+  const today = new Date();
+  const day = today.getDate();
+  const year = today.getFullYear();
+
+  // Array of month names
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const monthName = monthNames[today.getMonth()];
+
+  return `${monthName} ${day}, ${year}`;
+};
+
 export const getPrevailingWeatherDataPakpattan = async() =>{
   try {
     const response = await fetch(Constants.API.CURRENT);
@@ -37,6 +53,19 @@ export const get1DayForecastDataPakpattan = async() =>{
 export const getLast24HoursWeaterDataPakpattan = async() =>{
  try {
     const response = await fetch(Constants.API.LAST24Hours);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data
+  } catch (error) {
+    alert(JSON.stringify(error));
+  }
+}
+
+export const getLast24HoursWeaterDataArifWala = async() =>{
+ try {
+    const response = await fetch(Constants.API.ARIFWALALAST24HOURS);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -122,4 +151,87 @@ Dist. Average: ${rainAvg /2} mm
 
   *Riaz Ahmed, Deputy Director Agriculture Extension Pakpattan*`
   return msg;
+}
+
+
+
+//! Combined MSG 
+export const combinedWeatherMsg = async ()=>{
+    const dated = getCurrentDate2()
+
+  const data = await getPrevailingWeatherDataPakpattan()
+  const forecast= await get1DayForecastDataPakpattan()
+ 
+
+  const temp = Math.round(data[0].Temperature.Metric.Value)
+  const humidity = data[0].RelativeHumidity
+  const wind = data[0].Wind.Speed.Metric.Value
+  const windGust = data[0].WindGust.Speed.Metric.Value
+  const skies = data[0].WeatherText
+  const dayRainProbability = forecast.DailyForecasts[0].Day.RainProbability
+  const nightRainProbability = forecast.DailyForecasts[0].Night.RainProbability
+  const MaxProb = Math.max(dayRainProbability,nightRainProbability)
+  const MinProb = Math.min(dayRainProbability,nightRainProbability)
+// ----------------------------------------------------------------
+  const last24data = await getLast24HoursWeaterDataPakpattan()
+   const last24ArifwalaData = await getLast24HoursWeaterDataArifWala()
+
+  let maximum = null
+  let minimum = null
+  let rainPPNAvg = last24data[0].PrecipitationSummary.Past24Hours.Metric.Value
+  let rainArifwalaAvg = last24ArifwalaData[0].PrecipitationSummary.Past24Hours.Metric.Value
+
+  let minWindSpeed = null
+  let maxWindSpeed = null
+  let skies24 = last24data[0].WeatherText
+
+  let temp24 = []
+  let windSpeed = []
+  let humidityTemp = []
+ 
+ for(let i=0; i<=23; i++){
+  temp24.push(last24data[i].TemperatureSummary.Past24HourRange.Minimum.Metric.Value)
+  windSpeed.push(last24data[i].Wind.Speed.Metric.Value)
+   humidityTemp.push(last24data[i].RelativeHumidity)
+   
+ 
+ }
+ maximum = Math.max(...temp24)
+ minimum = Math.min(...temp24)
+
+ minWindSpeed= Math.min(...windSpeed)
+ maxWindSpeed = Math.max(...windSpeed)
+
+//  humidity last 24 max and min
+ let humidityLast24Min= Math.min(...humidityTemp)
+ let humidityLast24Max = Math.max(...humidityTemp)
+
+
+
+
+  const msg=`*Prevailing Weather Conditions in District Pakpattan*
+Date: ${dated}
+
+* Temperature: ${temp}°C
+* Humidity: ${humidity}%
+* Wind: ${wind} km/h (gusts up to ${windGust} km/h)
+* Skies: ${skies}
+* Rain Probability: ${MinProb}-${MaxProb}% (Source: Accuweather)
+
+*Last 24-hour Weather Report (up to 8:00 am)*
+* Temperature:
+    - Maximum: ${maximum}°C
+    - Minimum: ${minimum}°C
+* Precipitation:
+    - Pakpattan : ${rainPPNAvg}mm
+    - Arifwala: ${rainArifwalaAvg}mm
+    - District Average: ${(rainPPNAvg+rainArifwalaAvg)/2} mm
+* Wind Speed: ${minWindSpeed}kph - ${maxWindSpeed}kph
+* Humidity: ${humidityLast24Min} - ${humidityLast24Max}%
+* Skies: ${skies24}
+
+*Riaz Ahmed, Deputy Director Agriculture Extension Pakpattan*`;
+
+return msg
+
 }
